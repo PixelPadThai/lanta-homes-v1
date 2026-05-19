@@ -41,4 +41,157 @@ document.addEventListener('alpine:init', () => {
         }
     }));
 
+    // ── Gallery ─────────────────────────────────────────────────
+    Alpine.data('gallery', () => ({
+        activeCategory: 'interior',
+        lightboxOpen: false,
+        lightboxIndex: 0,
+        mainSlider: null,
+        thumbSlider: null,
+
+        images: {
+            interior: [
+                { src: 'images/interior-1.jpg', alt: 'Living Room' },
+                { src: 'images/interior-2.jpg', alt: 'Kitchen' },
+                { src: 'images/interior-3.jpg', alt: 'Bedroom 1' },
+                { src: 'images/interior-4.jpg', alt: 'Bedroom 2' },
+                { src: 'images/interior-5.jpg', alt: 'Bathroom' },
+            ],
+            exterior: [
+                { src: 'images/exterior-1.jpg', alt: 'Front View' },
+                { src: 'images/exterior-2.jpg', alt: 'Garden' },
+                { src: 'images/exterior-3.jpg', alt: 'Entrance' },
+            ],
+            surroundings: [
+                { src: 'images/surround-1.jpg', alt: 'Old Town Street' },
+                { src: 'images/surround-2.jpg', alt: 'Beach Nearby' },
+                { src: 'images/surround-3.jpg', alt: 'Local Market' },
+            ]
+        },
+
+        get currentImages() {
+            return this.images[this.activeCategory] || [];
+        },
+
+        setCategory(cat) {
+            if (cat === this.activeCategory) return;
+            this.activeCategory = cat;
+            this.rebuildSliders();
+        },
+
+        rebuildSliders() {
+            if (this.mainSlider) { this.mainSlider.destroy(); this.mainSlider = null; }
+            if (this.thumbSlider) { this.thumbSlider.destroy(); this.thumbSlider = null; }
+
+            const mainEl = this.$refs.mainSlider;
+            const thumbEl = this.$refs.thumbSlider;
+            if (!mainEl || !thumbEl) return;
+
+            mainEl.innerHTML = '';
+            thumbEl.innerHTML = '';
+
+            const imgs = this.currentImages;
+
+            imgs.forEach((img, idx) => {
+                const slide = document.createElement('div');
+                slide.className = 'keen-slider__slide';
+
+                const inner = document.createElement('div');
+                inner.className = 'relative w-full h-full bg-earth-pill flex items-center justify-center cursor-pointer';
+                inner.style.aspectRatio = '16 / 10';
+
+                const imgEl = document.createElement('img');
+                imgEl.src = img.src;
+                imgEl.alt = img.alt;
+                imgEl.className = 'absolute inset-0 w-full h-full object-cover';
+                imgEl.onerror = function() { this.style.display = 'none'; };
+
+                const label = document.createElement('span');
+                label.className = 'text-earth-secondary text-lg z-10';
+                label.textContent = img.alt;
+
+                inner.appendChild(imgEl);
+                inner.appendChild(label);
+                inner.addEventListener('click', () => this.openLightbox(idx));
+                slide.appendChild(inner);
+                mainEl.appendChild(slide);
+            });
+
+            imgs.forEach((img, idx) => {
+                const slide = document.createElement('div');
+                slide.className = 'keen-slider__slide';
+
+                const inner = document.createElement('div');
+                inner.className = 'relative h-16 md:h-20 bg-earth-pill rounded overflow-hidden flex items-center justify-center cursor-pointer';
+
+                const imgEl = document.createElement('img');
+                imgEl.src = img.src;
+                imgEl.alt = img.alt;
+                imgEl.className = 'absolute inset-0 w-full h-full object-cover';
+                imgEl.onerror = function() { this.style.display = 'none'; };
+
+                const label = document.createElement('span');
+                label.className = 'text-earth-secondary text-xs z-10';
+                label.textContent = img.alt;
+
+                inner.appendChild(imgEl);
+                inner.appendChild(label);
+                inner.addEventListener('click', () => this.goToSlide(idx));
+                slide.appendChild(inner);
+                thumbEl.appendChild(slide);
+            });
+
+            this.thumbSlider = new KeenSlider(thumbEl, {
+                slides: { perView: 5, spacing: 8 },
+                breakpoints: {
+                    '(max-width: 640px)': {
+                        slides: { perView: 3.5, spacing: 6 },
+                    },
+                },
+            });
+
+            this.mainSlider = new KeenSlider(mainEl, {
+                slides: { perView: 1 },
+                slideChanged: (s) => {
+                    const idx = s.track.details.rel;
+                    if (this.thumbSlider) {
+                        this.thumbSlider.moveToIdx(Math.max(0, idx - 1));
+                    }
+                },
+            });
+        },
+
+        goToSlide(idx) {
+            if (this.mainSlider) this.mainSlider.moveToIdx(idx);
+        },
+
+        openLightbox(idx) {
+            this.lightboxIndex = idx;
+            this.lightboxOpen = true;
+            document.body.style.overflow = 'hidden';
+        },
+
+        closeLightbox() {
+            this.lightboxOpen = false;
+            document.body.style.overflow = '';
+        },
+
+        lightboxPrev() {
+            this.lightboxIndex = (this.lightboxIndex - 1 + this.currentImages.length) % this.currentImages.length;
+        },
+
+        lightboxNext() {
+            this.lightboxIndex = (this.lightboxIndex + 1) % this.currentImages.length;
+        },
+
+        init() {
+            this.$nextTick(() => this.rebuildSliders());
+        },
+
+        destroy() {
+            if (this.mainSlider) this.mainSlider.destroy();
+            if (this.thumbSlider) this.thumbSlider.destroy();
+        }
+    }));
+
 });
