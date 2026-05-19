@@ -42,6 +42,12 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
+if (preg_match('/[\r\n]/', $email) || preg_match('/[\r\n]/', $name)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid input']);
+    exit;
+}
+
 // Build email
 $to      = 'agent@example.com'; // PLACEHOLDER — replace with real email
 $subject = "Baan Sawan Inquiry from $name";

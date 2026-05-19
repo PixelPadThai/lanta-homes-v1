@@ -8,6 +8,7 @@ document.addEventListener('alpine:init', () => {
         async init() {
             try {
                 const res = await fetch('lang.json');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 this.data = await res.json();
             } catch (e) {
                 console.error('Failed to load translations:', e);
@@ -20,6 +21,7 @@ document.addEventListener('alpine:init', () => {
 
         toggle() {
             this.current = this.current === 'en' ? 'th' : 'en';
+            document.documentElement.lang = this.current;
         }
     });
 
@@ -154,6 +156,9 @@ document.addEventListener('alpine:init', () => {
                 slides: { perView: 1 },
                 slideChanged: (s) => {
                     const idx = s.track.details.rel;
+                    thumbEl.querySelectorAll('.keen-slider__slide').forEach((el, i) => {
+                        el.classList.toggle('active', i === idx);
+                    });
                     if (this.thumbSlider) {
                         this.thumbSlider.moveToIdx(Math.max(0, idx - 1));
                     }
