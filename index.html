@@ -191,6 +191,142 @@
         </div>
     </section>
 
+    <!-- Drone Video -->
+    <section class="py-16 md:py-24" x-data="droneVideo">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="font-heading text-3xl md:text-4xl text-center mb-3"
+                x-text="$store.lang.t('video_title')"></h2>
+            <p class="text-center text-earth-secondary mb-8"
+               x-text="$store.lang.t('video_subtitle')"></p>
+        </div>
+
+        <div class="relative max-w-6xl mx-auto px-4">
+            <div class="video-container relative rounded-xl overflow-hidden shadow-lg">
+                <div class="video-placeholder w-full flex items-center justify-center"
+                     style="aspect-ratio: 16/9;">
+                    <video x-ref="video"
+                           class="absolute inset-0 w-full h-full object-cover"
+                           playsinline muted loop
+                           data-src="video/drone.mp4">
+                    </video>
+
+                    <span x-show="!loaded" class="text-white/60 text-lg z-10">Video placeholder</span>
+                </div>
+
+                <div class="absolute bottom-4 right-4 flex gap-2 z-10">
+                    <button @click="togglePlay()"
+                            class="bg-white/80 hover:bg-white rounded-full p-3 shadow-lg transition-all cursor-pointer">
+                        <svg x-show="!playing" class="w-5 h-5 text-earth-text" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        <svg x-show="playing" class="w-5 h-5 text-earth-text" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                        </svg>
+                    </button>
+                    <button @click="toggleMute()"
+                            class="bg-white/80 hover:bg-white rounded-full p-3 shadow-lg transition-all cursor-pointer">
+                        <svg x-show="muted" class="w-5 h-5 text-earth-text" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                        </svg>
+                        <svg x-show="!muted" class="w-5 h-5 text-earth-text" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Details -->
+    <section class="py-16 md:py-24 bg-white"
+             x-data="scrollReveal" :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
+        <div class="max-w-5xl mx-auto px-4">
+            <h2 class="font-heading text-3xl md:text-4xl text-center mb-12"
+                x-text="$store.lang.t('details_title')"></h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Location -->
+                <div class="p-6 rounded-xl bg-earth-bg">
+                    <div class="flex items-center gap-3 mb-3">
+                        <svg class="w-6 h-6 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <h3 class="font-heading text-xl font-semibold"
+                            x-text="$store.lang.t('details_location_title')"></h3>
+                    </div>
+                    <p class="text-earth-secondary leading-relaxed"
+                       x-text="$store.lang.t('details_location_text')"></p>
+                </div>
+
+                <!-- Condition -->
+                <div class="p-6 rounded-xl bg-earth-bg">
+                    <div class="flex items-center gap-3 mb-3">
+                        <svg class="w-6 h-6 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                        </svg>
+                        <h3 class="font-heading text-xl font-semibold"
+                            x-text="$store.lang.t('details_condition_title')"></h3>
+                    </div>
+                    <p class="text-earth-secondary leading-relaxed"
+                       x-text="$store.lang.t('details_condition_text')"></p>
+                </div>
+
+                <!-- Nearby -->
+                <div class="p-6 rounded-xl bg-earth-bg">
+                    <div class="flex items-center gap-3 mb-3">
+                        <svg class="w-6 h-6 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        <h3 class="font-heading text-xl font-semibold"
+                            x-text="$store.lang.t('details_amenities_title')"></h3>
+                    </div>
+                    <p class="text-earth-secondary leading-relaxed"
+                       x-text="$store.lang.t('details_amenities_text')"></p>
+                </div>
+
+                <!-- Price -->
+                <div class="p-6 rounded-xl bg-earth-accent/10 border border-earth-accent/20">
+                    <div class="flex items-center gap-3 mb-3">
+                        <svg class="w-6 h-6 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h3 class="font-heading text-xl font-semibold"
+                            x-text="$store.lang.t('details_price_title')"></h3>
+                    </div>
+                    <p class="text-earth-accent font-semibold text-lg"
+                       x-text="$store.lang.t('details_price_text')"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location Map -->
+    <section class="py-16 md:py-24">
+        <div class="max-w-5xl mx-auto px-4">
+            <h2 class="font-heading text-3xl md:text-4xl text-center mb-8"
+                x-text="$store.lang.t('map_title')"></h2>
+
+            <div class="rounded-xl overflow-hidden shadow-lg">
+                <iframe
+                    src="https://maps.google.com/maps?q=7.5361,99.7503&z=15&output=embed"
+                    width="100%"
+                    height="400"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Baan Sawan location on map"
+                ></iframe>
+            </div>
+        </div>
+    </section>
+
     <!-- Keen Slider JS -->
     <script src="https://cdn.jsdelivr.net/npm/keen-slider@6/keen-slider.min.js"></script>
     <!-- App JS (registers Alpine stores/components before Alpine inits) -->

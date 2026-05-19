@@ -194,4 +194,48 @@ document.addEventListener('alpine:init', () => {
         }
     }));
 
+    // ── Drone Video ─────────────────────────────────────────────
+    Alpine.data('droneVideo', () => ({
+        playing: false,
+        muted: true,
+        loaded: false,
+
+        init() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !this.loaded) {
+                        const video = this.$refs.video;
+                        if (video && video.dataset.src) {
+                            video.src = video.dataset.src;
+                            video.load();
+                            this.loaded = true;
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.25 });
+
+            observer.observe(this.$el);
+        },
+
+        togglePlay() {
+            const video = this.$refs.video;
+            if (!video) return;
+            if (video.paused) {
+                video.play();
+                this.playing = true;
+            } else {
+                video.pause();
+                this.playing = false;
+            }
+        },
+
+        toggleMute() {
+            const video = this.$refs.video;
+            if (!video) return;
+            video.muted = !video.muted;
+            this.muted = video.muted;
+        }
+    }));
+
 });
