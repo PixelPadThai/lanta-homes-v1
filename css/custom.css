@@ -1,0 +1,99 @@
+/* ── Base ──────────────────────────────────────────────────── */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ── Hero ──────────────────────────────────────────────────── */
+.hero-overlay {
+    background: linear-gradient(
+        to bottom,
+        rgba(61, 50, 41, 0.35) 0%,
+        rgba(61, 50, 41, 0.1) 50%,
+        rgba(61, 50, 41, 0.55) 100%
+    );
+}
+
+.hero-placeholder-bg {
+    background: linear-gradient(135deg, #8B7355 0%, #C4956A 35%, #D4B896 60%, #87CEEB 100%);
+}
+
+/* ── Scroll Indicator ──────────────────────────────────────── */
+@keyframes bounce-down {
+    0%, 100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(12px);
+        opacity: 0.4;
+    }
+}
+
+.scroll-indicator {
+    animation: bounce-down 2s ease-in-out infinite;
+}
+
+/* ── Pills Scroll (hide scrollbar) ─────────────────────────── */
+.pills-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.pills-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* ── Keen Slider Overrides ─────────────────────────────────── */
+.gallery-slider {
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.gallery-slider .keen-slider__slide {
+    overflow: hidden;
+}
+
+.thumb-slider .keen-slider__slide {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.thumb-slider .keen-slider__slide:hover,
+.thumb-slider .keen-slider__slide.active {
+    opacity: 1;
+}
+
+/* ── Lightbox ──────────────────────────────────────────────── */
+.lightbox-overlay {
+    backdrop-filter: blur(4px);
+}
+
+/* ── Section Reveal Animation ──────────────────────────────── */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.reveal-hidden {
+    opacity: 0;
+}
+
+.reveal-visible {
+    animation: fade-in-up 0.7s ease-out forwards;
+}
+
+/* ── Video Section ─────────────────────────────────────────── */
+.video-container video {
+    object-fit: cover;
+}
+
+.video-placeholder {
+    background: linear-gradient(135deg, #3D3229 0%, #8B7355 50%, #C4956A 100%);
+}
