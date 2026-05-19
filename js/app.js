@@ -238,4 +238,53 @@ document.addEventListener('alpine:init', () => {
         }
     }));
 
+    // ── Contact Form ────────────────────────────────────────────
+    Alpine.data('contactForm', () => ({
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
+        honeypot: '',
+        state: 'idle',
+
+        async submit() {
+            if (this.state === 'sending') return;
+            this.state = 'sending';
+
+            try {
+                const res = await fetch('php/send-mail.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: this.name,
+                        email: this.email,
+                        phone: this.phone,
+                        message: this.message,
+                        honeypot: this.honeypot
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    this.state = 'success';
+                    this.name = '';
+                    this.email = '';
+                    this.phone = '';
+                    this.message = '';
+                } else {
+                    this.state = 'error';
+                }
+            } catch (e) {
+                this.state = 'error';
+            }
+        },
+
+        resetState() {
+            if (this.state === 'success' || this.state === 'error') {
+                this.state = 'idle';
+            }
+        }
+    }));
+
 });
