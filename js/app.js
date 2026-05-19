@@ -23,4 +23,22 @@ document.addEventListener('alpine:init', () => {
         }
     });
 
+    // ── Scroll Reveal ───────────────────────────────────────────
+    Alpine.data('scrollReveal', () => ({
+        revealed: false,
+
+        init() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        this.revealed = true;
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            observer.observe(this.$el);
+        }
+    }));
+
 });
