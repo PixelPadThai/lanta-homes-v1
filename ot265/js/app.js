@@ -23,12 +23,10 @@ const LANG_DATA = {
     "video_title": "Aerial View",
     "video_subtitle": "Explore the surroundings from above",
     "details_title": "Property Details",
-    "details_location_title": "Location",
-    "details_location_text": "Quiet residential soi, 5–8 min walk to Old Town's waterfront (1 min by motorbike). 2 min by motorbike to 7-Eleven, 3 min to Old Town cafés and restaurant strip. Mature trees around the plot; natural green buffer directly behind with no rear neighbours. Mountain ridge visible in the distance.",
+    "details_location_title": "Location & Surroundings",
+    "details_location_text": "Quiet residential soi in Old Town — 5–8 min walk to the waterfront (1 min by motorbike), 2 min to 7-Eleven, and 3 min to the Old Town cafés and restaurant strip. Lanta Community Hospital, local schools, and the ferry pier are all within easy reach. Mature trees surround the plot with a natural green buffer directly behind — no rear neighbours, and a mountain ridge in the distance.",
     "details_condition_title": "Condition",
     "details_condition_text": "Interior is move-in ready — walls, floors, bathrooms, kitchen and roof are all in good condition. Exterior needs fresh paint and landscaping. East/west boundary fences can be raised for more privacy (foundations on west side already laid). Sold as-is with no further work planned by the sellers.",
-    "details_amenities_title": "Nearby",
-    "details_amenities_text": "Old Town waterfront: 5–8 min walk · 7-Eleven: 2 min by motorbike · Old Town cafés and restaurants: 3 min by motorbike · Local schools nearby (moderate daytime activity) · Lanta Community Hospital · Ferry pier within easy reach",
     "details_price_title": "Price",
     "details_price_text": "Asking 1,950,000 THB · Property currently mortgaged; discharge handled at transfer · Processing fee ~85,000 THB + land office fees ~100,000 THB are additional",
     "info_asking_price": "Asking Price",
@@ -75,12 +73,10 @@ const LANG_DATA = {
     "video_title": "มุมมองทางอากาศ",
     "video_subtitle": "สำรวจบริเวณโดยรอบจากมุมสูง",
     "details_title": "รายละเอียดทรัพย์สิน",
-    "details_location_title": "ที่ตั้ง",
-    "details_location_text": "ซอยที่พักอาศัยเงียบสงบ เดินถึงริมน้ำโอลด์ทาวน์ 5–8 นาที (ขับมอเตอร์ไซค์ 1 นาที) ขับมอเตอร์ไซค์ถึงเซเว่นอีเลฟเว่น 2 นาที ถึงคาเฟ่และร้านอาหาร 3 นาที มีต้นไม้ใหญ่รอบพื้นที่ ด้านหลังติดแนวต้นไม้ธรรมชาติ ไม่มีบ้านเพื่อนบ้านด้านหลัง",
+    "details_location_title": "ที่ตั้งและบริเวณโดยรอบ",
+    "details_location_text": "ซอยที่พักอาศัยเงียบสงบในโอลด์ทาวน์ — เดินถึงริมน้ำ 5–8 นาที (ขับมอเตอร์ไซค์ 1 นาที) ถึงเซเว่นอีเลฟเว่น 2 นาที และถึงคาเฟ่กับร้านอาหารโอลด์ทาวน์ 3 นาที โรงพยาบาลชุมชนลันตา โรงเรียนใกล้เคียง และท่าเรือเฟอร์รี่อยู่ในระยะเดินทางสะดวก มีต้นไม้ใหญ่รอบพื้นที่ ด้านหลังติดแนวต้นไม้ธรรมชาติ ไม่มีบ้านเพื่อนบ้านด้านหลัง และมองเห็นแนวภูเขาในระยะไกล",
     "details_condition_title": "สภาพ",
     "details_condition_text": "ภายในพร้อมเข้าอยู่ — ผนัง พื้น ห้องน้ำ ครัว และหลังคาอยู่ในสภาพดี ภายนอกต้องการทาสีและจัดสวน รั้วด้านตะวันออกและตะวันตกสามารถเพิ่มความสูงเพื่อความเป็นส่วนตัว (ฐานรากด้านตะวันตกเทไว้แล้ว) ขายตามสภาพ",
-    "details_amenities_title": "สถานที่ใกล้เคียง",
-    "details_amenities_text": "ริมน้ำโอลด์ทาวน์: เดิน 5–8 นาที · เซเว่นอีเลฟเว่น: ขับมอเตอร์ไซค์ 2 นาที · คาเฟ่และร้านอาหาร: 3 นาที · โรงเรียนใกล้เคียง · โรงพยาบาลชุมชนลันตา · ท่าเรือเฟอร์รี่อยู่ในระยะเดินทางสะดวก",
     "details_price_title": "ราคา",
     "details_price_text": "ราคาเสนอขาย 1,950,000 บาท · ทรัพย์สินติดจำนอง ไถ่ถอนเมื่อโอนกรรมสิทธิ์ · ค่าดำเนินการ ~85,000 บาท + ค่าธรรมเนียมสำนักงานที่ดิน ~100,000 บาท (ชำระเพิ่มเติม)",
     "info_asking_price": "ราคาเสนอขาย",
@@ -132,15 +128,19 @@ function registerAlpine() {
         }
     });
 
-    // ── Lang Toggle (hides when hero scrolls out) ───────────────
+    // ── Lang Toggle (hides once you scroll past the hero) ───────
+    // Scroll-based rather than IntersectionObserver: on mobile the hero is
+    // position:fixed, so it never "leaves" the viewport for an observer.
     Alpine.data('langToggle', () => ({
         visible: true,
         init() {
             const hero = document.querySelector('[data-hero]');
-            if (!hero) return;
-            new IntersectionObserver(([entry]) => {
-                this.visible = entry.isIntersecting;
-            }, { threshold: 0 }).observe(hero);
+            const update = () => {
+                const h = hero ? hero.getBoundingClientRect().height : window.innerHeight;
+                this.visible = window.scrollY < h * 0.6;
+            };
+            update();
+            window.addEventListener('scroll', update, { passive: true });
         }
     }));
 

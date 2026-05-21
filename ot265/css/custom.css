@@ -13,6 +13,24 @@ html {
     );
 }
 
+/* Mobile: hero is pinned behind the page so content scrolls up over it.
+   75vw = height of a full-width 4:3 hero (matches the aspect-[4/3] class). */
+@media (max-width: 1023px) {
+    [data-hero] {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 75vw;
+        z-index: -1;
+    }
+    .content-over-hero {
+        position: relative;
+        margin-top: 75vw;
+        background: #FAF6F1;
+    }
+}
+
 .hero-placeholder-bg {
     background: linear-gradient(135deg, #8B7355 0%, #C4956A 35%, #D4B896 60%, #87CEEB 100%);
 }

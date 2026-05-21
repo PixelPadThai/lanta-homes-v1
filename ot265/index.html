@@ -57,7 +57,7 @@
          x-transition.opacity>
         <button
             @click="$store.lang.toggle()"
-            class="w-11 h-11 rounded-full shadow-lg ring-2 ring-white/80 overflow-hidden hover:scale-105 transition-transform cursor-pointer flex items-center justify-center"
+            class="w-8 h-8 rounded-full shadow-lg ring-2 ring-white/80 overflow-hidden hover:scale-105 transition-transform cursor-pointer flex items-center justify-center"
             :aria-label="$store.lang.current === 'en' ? 'Switch to Thai' : 'Switch to English'"
         >
             <img x-show="$store.lang.current === 'en'" src="images/thai.svg" alt="" class="w-full h-full object-cover">
@@ -87,15 +87,18 @@
         </a>
     </section>
 
+    <!-- Everything below the hero scrolls up over the pinned mobile hero -->
+    <div class="content-over-hero">
+
     <!-- Mobile info bar (sticky below hero, hidden on lg+) -->
     <div class="lg:hidden sticky top-0 z-40 bg-white border-b border-earth-pill shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-2.5">
-            <p class="font-heading text-sm font-semibold text-earth-text leading-tight"
+        <div class="max-w-6xl mx-auto px-4 py-2">
+            <p class="font-heading text-lg font-semibold text-earth-text leading-tight"
                x-text="$store.lang.t('hero_mobile_title')"></p>
-            <div class="flex items-center justify-between mt-0.5">
-                <span class="text-xs text-earth-secondary"
+            <div class="flex items-center justify-between gap-3">
+                <span class="text-sm text-earth-secondary"
                       x-text="$store.lang.t('hero_mobile_location')"></span>
-                <span class="bg-earth-accent text-white text-xs font-semibold px-3 py-1 rounded-full mr-12"
+                <span class="bg-earth-accent text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap"
                       x-text="$store.lang.t('pill_price')"></span>
             </div>
         </div>
@@ -319,8 +322,8 @@
             <h2 class="font-heading text-3xl md:text-4xl text-center mb-12"
                 x-text="$store.lang.t('details_title')"></h2>
 
-            <!-- 3 equal info cards -->
-            <div class="grid md:grid-cols-3 gap-6 mb-6">
+            <!-- 2 equal info cards -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
 
                 <!-- Location -->
                 <div class="p-6 rounded-xl bg-earth-bg border-t-2 border-earth-accent">
@@ -350,20 +353,6 @@
                     </div>
                     <p class="text-earth-secondary leading-relaxed text-base"
                        x-text="$store.lang.t('details_condition_text')"></p>
-                </div>
-
-                <!-- Nearby -->
-                <div class="p-6 rounded-xl bg-earth-bg border-t-2 border-earth-accent">
-                    <div class="flex items-center gap-2.5 mb-3">
-                        <svg class="w-5 h-5 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                        </svg>
-                        <h3 class="font-heading text-lg font-semibold"
-                            x-text="$store.lang.t('details_amenities_title')"></h3>
-                    </div>
-                    <p class="text-earth-secondary leading-relaxed text-base"
-                       x-text="$store.lang.t('details_amenities_text')"></p>
                 </div>
 
             </div>
@@ -518,10 +507,12 @@
         </div>
     </footer>
 
+    </div><!-- /content-over-hero -->
+
     <!-- Keen Slider JS -->
     <script src="https://cdn.jsdelivr.net/npm/keen-slider@6/keen-slider.min.js"></script>
     <!-- App JS (registers stores/components before Alpine init) -->
-    <script src="js/app.js?v=8"></script>
+    <script src="js/app.js?v=9"></script>
     <!-- Alpine.js (deferred — fires alpine:init after page parses) -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 </body>
