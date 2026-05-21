@@ -1,0 +1,8 @@
+# Local-only project docs / notes — not part of the deployed site
+CLAUDE.md
+docs/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
