@@ -1,3 +1,106 @@
+const LANG_DATA = {
+  "en": {
+    "lang_toggle": "ไทย",
+    "hero_title": "Baan Sawan",
+    "hero_tagline": "Modern 2-Bed Near Old Town, Koh Lanta — 1,950,000 THB",
+    "pill_price": "1,950,000 THB",
+    "pill_bedrooms": "2 Bedrooms",
+    "pill_bathrooms": "2 Bathrooms",
+    "pill_living": "100 m² Built Area",
+    "pill_land": "55 sq wah Land",
+    "pill_year": "Built 2016",
+    "pill_ownership": "Chanote Title",
+    "overview_title": "Property Overview",
+    "overview_p1": "Architect-designed in 2016, this single-storey home stands out immediately. A split-pitch butterfly roof tops a vaulted living and dining room with tall transom windows; sliding wooden barn doors on matte-black iron rails connect the bedrooms; polished microcement bathrooms and cast-concrete kitchen counters complete a design vocabulary that punches well above its price point.",
+    "overview_p2": "The interior is largely move-in ready — walls, floors, kitchen and bathrooms are all sound. The exterior wants a fresh coat of paint and the garden a vision; that is where the opportunity sits. The owners are selling as-is at a price that reflects the work ahead, making this a compelling project for someone who wants to flip, rent long-term, or settle into one of Koh Lanta's most characterful neighbourhoods.",
+    "overview_p3": "Old Town has quietly become one of Koh Lanta's most desirable corners — slower, more authentic, and increasingly popular with long-stay visitors, expats, and digital nomads. The house sits inside that catchment: 5–8 minutes on foot to the waterfront, minutes from cafés and restaurants, with a natural green buffer behind the plot and no rear neighbours.",
+    "gallery_title": "Gallery",
+    "gallery_interior": "Interior",
+    "gallery_exterior": "Exterior",
+    "gallery_surroundings": "Aerial & Plan",
+    "video_title": "Aerial View",
+    "video_subtitle": "Explore the surroundings from above",
+    "details_title": "Property Details",
+    "details_location_title": "Location",
+    "details_location_text": "Quiet residential soi, 5–8 min walk to Old Town's waterfront (1 min by motorbike). 2 min by motorbike to 7-Eleven, 3 min to Old Town cafés and restaurant strip. Mature trees around the plot; natural green buffer directly behind with no rear neighbours. Mountain ridge visible in the distance.",
+    "details_condition_title": "Condition",
+    "details_condition_text": "Interior is move-in ready — walls, floors, bathrooms, kitchen and roof are all in good condition. Exterior needs fresh paint and landscaping. East/west boundary fences can be raised for more privacy (foundations on west side already laid). Sold as-is with no further work planned by the sellers.",
+    "details_amenities_title": "Nearby",
+    "details_amenities_text": "Old Town waterfront: 5–8 min walk · 7-Eleven: 2 min by motorbike · Old Town cafés and restaurants: 3 min by motorbike · Local schools nearby (moderate daytime activity) · Lanta Community Hospital · Ferry pier within easy reach",
+    "details_price_title": "Price",
+    "details_price_text": "Asking 1,950,000 THB · Property currently mortgaged; discharge handled at transfer · Processing fee ~85,000 THB + land office fees ~100,000 THB are additional",
+    "info_asking_price": "Asking Price",
+    "overview_cta": "Arrange a Viewing",
+    "map_title": "Location",
+    "contact_title": "Interested?",
+    "contact_subtitle": "Get in touch to arrange a viewing or ask any questions",
+    "contact_name": "Your Name",
+    "contact_email": "Email Address",
+    "contact_phone": "Phone Number",
+    "contact_message": "Message",
+    "contact_send": "Send Message",
+    "contact_sending": "Sending...",
+    "contact_success": "Thank you! Your message has been sent. We'll get back to you soon.",
+    "contact_error": "Something went wrong. Please try again or contact us directly.",
+    "contact_whatsapp": "Chat on WhatsApp",
+    "contact_line": "Chat on LINE",
+    "contact_agent": "Listed by",
+    "contact_agent_name": "Agent Name",
+    "footer_rights": "All rights reserved.",
+    "footer_listed_by": "Listed by"
+  },
+  "th": {
+    "lang_toggle": "EN",
+    "hero_title": "บ้านสวรรค์",
+    "hero_tagline": "บ้านทันสมัย 2 ห้องนอน ใกล้โอลด์ทาวน์ เกาะลันตา — 1,950,000 บาท",
+    "pill_price": "1,950,000 บาท",
+    "pill_bedrooms": "2 ห้องนอน",
+    "pill_bathrooms": "2 ห้องน้ำ",
+    "pill_living": "100 ตร.ม. พื้นที่ใช้สอย",
+    "pill_land": "55 ตารางวา",
+    "pill_year": "สร้างปี 2559",
+    "pill_ownership": "โฉนดที่ดิน (ครุฑแดง)",
+    "overview_title": "ภาพรวมทรัพย์สิน",
+    "overview_p1": "บ้านออกแบบโดยสถาปนิกในปี 2559 โดดเด่นตั้งแต่มองแรก หลังคาผีเสื้อทรงเฉพาะตัวคลุมห้องนั่งเล่นโล่งสูงพร้อมหน้าต่างช่องแสงสูง ประตูบานเลื่อนไม้บนรางเหล็กสีดำมัตต์เชื่อมต่อห้องนอน ห้องน้ำไมโครซีเมนต์ขัดมันและเคาน์เตอร์ครัวคอนกรีตหล่อสะท้อนรสนิยมที่เหนือระดับราคา",
+    "overview_p2": "ภายในบ้านพร้อมเข้าอยู่ — ผนัง พื้น ครัว และห้องน้ำอยู่ในสภาพดีทั้งหมด ภายนอกต้องการทาสีใหม่และจัดสวน ซึ่งเป็นโอกาสสำหรับผู้ซื้อที่ต้องการเพิ่มมูลค่า เจ้าของขายตามสภาพในราคาที่สะท้อนงานที่ยังรอการพัฒนา เหมาะสำหรับนักลงทุนที่ต้องการพลิกขาย ปล่อยเช่าระยะยาว หรืออยู่อาศัยในย่านที่มีเสน่ห์ที่สุดของเกาะลันตา",
+    "overview_p3": "โอลด์ทาวน์กลายเป็นหนึ่งในย่านที่น่าอยู่ที่สุดของเกาะลันตา — เงียบสงบ มีเอกลักษณ์เฉพาะตัว และเป็นที่นิยมของนักท่องเที่ยวพำนักระยะยาว ชาวต่างชาติ และดิจิทัลโนแมด บ้านตั้งอยู่ในทำเลนั้น: เดินถึงริมน้ำ 5–8 นาที ใกล้คาเฟ่และร้านอาหาร มีแนวต้นไม้ธรรมชาติด้านหลังและไม่มีบ้านเพื่อนบ้านด้านหลัง",
+    "gallery_title": "แกลเลอรี",
+    "gallery_interior": "ภายใน",
+    "gallery_exterior": "ภายนอก",
+    "gallery_surroundings": "ภาพทางอากาศ",
+    "video_title": "มุมมองทางอากาศ",
+    "video_subtitle": "สำรวจบริเวณโดยรอบจากมุมสูง",
+    "details_title": "รายละเอียดทรัพย์สิน",
+    "details_location_title": "ที่ตั้ง",
+    "details_location_text": "ซอยที่พักอาศัยเงียบสงบ เดินถึงริมน้ำโอลด์ทาวน์ 5–8 นาที (ขับมอเตอร์ไซค์ 1 นาที) ขับมอเตอร์ไซค์ถึงเซเว่นอีเลฟเว่น 2 นาที ถึงคาเฟ่และร้านอาหาร 3 นาที มีต้นไม้ใหญ่รอบพื้นที่ ด้านหลังติดแนวต้นไม้ธรรมชาติ ไม่มีบ้านเพื่อนบ้านด้านหลัง",
+    "details_condition_title": "สภาพ",
+    "details_condition_text": "ภายในพร้อมเข้าอยู่ — ผนัง พื้น ห้องน้ำ ครัว และหลังคาอยู่ในสภาพดี ภายนอกต้องการทาสีและจัดสวน รั้วด้านตะวันออกและตะวันตกสามารถเพิ่มความสูงเพื่อความเป็นส่วนตัว (ฐานรากด้านตะวันตกเทไว้แล้ว) ขายตามสภาพ",
+    "details_amenities_title": "สถานที่ใกล้เคียง",
+    "details_amenities_text": "ริมน้ำโอลด์ทาวน์: เดิน 5–8 นาที · เซเว่นอีเลฟเว่น: ขับมอเตอร์ไซค์ 2 นาที · คาเฟ่และร้านอาหาร: 3 นาที · โรงเรียนใกล้เคียง · โรงพยาบาลชุมชนลันตา · ท่าเรือเฟอร์รี่อยู่ในระยะเดินทางสะดวก",
+    "details_price_title": "ราคา",
+    "details_price_text": "ราคาเสนอขาย 1,950,000 บาท · ทรัพย์สินติดจำนอง ไถ่ถอนเมื่อโอนกรรมสิทธิ์ · ค่าดำเนินการ ~85,000 บาท + ค่าธรรมเนียมสำนักงานที่ดิน ~100,000 บาท (ชำระเพิ่มเติม)",
+    "info_asking_price": "ราคาเสนอขาย",
+    "overview_cta": "นัดชมทรัพย์",
+    "map_title": "ที่ตั้ง",
+    "contact_title": "สนใจไหม?",
+    "contact_subtitle": "ติดต่อเพื่อนัดชมหรือสอบถามข้อมูลเพิ่มเติม",
+    "contact_name": "ชื่อ",
+    "contact_email": "อีเมล",
+    "contact_phone": "เบอร์โทรศัพท์",
+    "contact_message": "ข้อความ",
+    "contact_send": "ส่งข้อความ",
+    "contact_sending": "กำลังส่ง...",
+    "contact_success": "ขอบคุณ! ข้อความของคุณถูกส่งเรียบร้อยแล้ว เราจะติดต่อกลับโดยเร็ว",
+    "contact_error": "เกิดข้อผิดพลาด กรุณาลองอีกครั้งหรือติดต่อเราโดยตรง",
+    "contact_whatsapp": "แชทผ่าน WhatsApp",
+    "contact_line": "แชทผ่าน LINE",
+    "contact_agent": "ลงประกาศโดย",
+    "contact_agent_name": "ชื่อเอเจนต์",
+    "footer_rights": "สงวนลิขสิทธิ์",
+    "footer_listed_by": "ลงประกาศโดย"
+  }
+};
+
 document.addEventListener('alpine:init', () => {
 
     // ── Language Store ──────────────────────────────────────────
@@ -6,13 +109,13 @@ document.addEventListener('alpine:init', () => {
         data: {},
 
         async init() {
+            // Use embedded data immediately — works with file:// and HTTP
+            this.data = LANG_DATA;
+            // Attempt to load fresh copy from server (silent fail on file://)
             try {
                 const res = await fetch('lang.json');
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                this.data = await res.json();
-            } catch (e) {
-                console.error('Failed to load translations:', e);
-            }
+                if (res.ok) this.data = await res.json();
+            } catch (e) { /* keep embedded data */ }
         },
 
         t(key) {
@@ -53,35 +156,82 @@ document.addEventListener('alpine:init', () => {
 
         images: {
             interior: [
-                { src: 'images/interior-1.jpg', alt: 'Living Room' },
-                { src: 'images/interior-2.jpg', alt: 'Kitchen' },
-                { src: 'images/interior-3.jpg', alt: 'Bedroom 1' },
-                { src: 'images/interior-4.jpg', alt: 'Bedroom 2' },
-                { src: 'images/interior-5.jpg', alt: 'Bathroom' },
+                { src: 'ot265/oldtown-2bed-house-entry-room-1-web.jpg',      thumb: 'ot265/oldtown-2bed-house-entry-room-1-web-thumb.jpg',      alt: 'Living & Dining Area' },
+                { src: 'ot265/oldtown-2bed-house-entry-room-2-web.jpg',      thumb: 'ot265/oldtown-2bed-house-entry-room-2-web-thumb.jpg',      alt: 'Dining Area' },
+                { src: 'ot265/oldtown-2bed-house-entry-room-3-web.jpg',      thumb: 'ot265/oldtown-2bed-house-entry-room-3-web-thumb.jpg',      alt: 'Living Room' },
+                { src: 'ot265/oldtown-2bed-house-kitchen-1-web.jpg',         thumb: 'ot265/oldtown-2bed-house-kitchen-1-web-thumb.jpg',         alt: 'Kitchen' },
+                { src: 'ot265/oldtown-2bed-house-kitchen-2-web.jpg',         thumb: 'ot265/oldtown-2bed-house-kitchen-2-web-thumb.jpg',         alt: 'Kitchen Peninsula' },
+                { src: 'ot265/oldtown-2bed-house-kitchen-3-web.jpg',         thumb: 'ot265/oldtown-2bed-house-kitchen-3-web-thumb.jpg',         alt: 'Kitchen' },
+                { src: 'ot265/oldtown-2bed-house-kitchen-4-web.jpg',         thumb: 'ot265/oldtown-2bed-house-kitchen-4-web-thumb.jpg',         alt: 'Kitchen' },
+                { src: 'ot265/oldtown-2bed-house-kitchen-5-web.jpg',         thumb: 'ot265/oldtown-2bed-house-kitchen-5-web-thumb.jpg',         alt: 'Kitchen View' },
+                { src: 'ot265/oldtown-2bed-house-bedroom-1-1-web.jpg',       thumb: 'ot265/oldtown-2bed-house-bedroom-1-1-web-thumb.jpg',       alt: 'Master Bedroom' },
+                { src: 'ot265/oldtown-2bed-house-bedroom-1-2-web.jpg',       thumb: 'ot265/oldtown-2bed-house-bedroom-1-2-web-thumb.jpg',       alt: 'Master Bedroom' },
+                { src: 'ot265/oldtown-2bed-house-bedroom-1-3-web.jpg',       thumb: 'ot265/oldtown-2bed-house-bedroom-1-3-web-thumb.jpg',       alt: 'Master Bedroom' },
+                { src: 'ot265/oldtown-2bed-house-bedroom-1-toilet-1-web.jpg',thumb: 'ot265/oldtown-2bed-house-bedroom-1-toilet-1-web-thumb.jpg',alt: 'En-suite Bathroom' },
+                { src: 'ot265/oldtown-2bed-house-bedroom-1-toilet-2-web.jpg',thumb: 'ot265/oldtown-2bed-house-bedroom-1-toilet-2-web-thumb.jpg',alt: 'En-suite Bathroom' },
+                { src: 'ot265/oldtown-2bed-house-bedroom-2-1-web.jpg',       thumb: 'ot265/oldtown-2bed-house-bedroom-2-1-web-thumb.jpg',       alt: 'Second Bedroom' },
+                { src: 'ot265/oldtown-2bed-house-bedroom-2-2-web.jpg',       thumb: 'ot265/oldtown-2bed-house-bedroom-2-2-web-thumb.jpg',       alt: 'Second Bedroom' },
+                { src: 'ot265/oldtown-2bed-house-bedroom-2-3-web.jpg',       thumb: 'ot265/oldtown-2bed-house-bedroom-2-3-web-thumb.jpg',       alt: 'Second Bedroom' },
+                { src: 'ot265/oldtown-2bed-house-detached-toilet-1-web.jpg', thumb: 'ot265/oldtown-2bed-house-detached-toilet-1-web-thumb.jpg', alt: 'Bathroom' },
             ],
             exterior: [
-                { src: 'images/exterior-1.jpg', alt: 'Front View' },
-                { src: 'images/exterior-2.jpg', alt: 'Garden' },
-                { src: 'images/exterior-3.jpg', alt: 'Entrance' },
+                { src: 'ot265/oldtown-2bed-house-front-1-web.jpg',           thumb: 'ot265/oldtown-2bed-house-front-1-web-thumb.jpg',           alt: 'Front of House' },
+                { src: 'ot265/oldtown-2bed-house-front-2-web.jpg',           thumb: 'ot265/oldtown-2bed-house-front-2-web-thumb.jpg',           alt: 'Front Facade' },
+                { src: 'ot265/oldtown-2bed-house-front-3-web.jpg',           thumb: 'ot265/oldtown-2bed-house-front-3-web-thumb.jpg',           alt: 'Front View' },
+                { src: 'ot265/oldtown-2bed-house-front-4-web.jpg',           thumb: 'ot265/oldtown-2bed-house-front-4-web-thumb.jpg',           alt: 'Carport & Entrance' },
+                { src: 'ot265/oldtown-2bed-house-back-side-1-web.jpg',       thumb: 'ot265/oldtown-2bed-house-back-side-1-web-thumb.jpg',       alt: 'Back of House' },
+                { src: 'ot265/oldtown-2bed-house-back-side-2-web.jpg',       thumb: 'ot265/oldtown-2bed-house-back-side-2-web-thumb.jpg',       alt: 'Back Exterior' },
+                { src: 'ot265/oldtown-2bed-house-back-side-view-1-web.jpg',  thumb: 'ot265/oldtown-2bed-house-back-side-view-1-web-thumb.jpg',  alt: 'Rear Garden View' },
+                { src: 'ot265/oldtown-2bed-house-back-side-view-2-web.jpg',  thumb: 'ot265/oldtown-2bed-house-back-side-view-2-web-thumb.jpg',  alt: 'Rear View' },
+                { src: 'ot265/oldtown-2bed-house-back-west-side-1-web.jpg',  thumb: 'ot265/oldtown-2bed-house-back-west-side-1-web-thumb.jpg',  alt: 'West Side' },
             ],
             surroundings: [
-                { src: 'images/surround-1.jpg', alt: 'Old Town Street' },
-                { src: 'images/surround-2.jpg', alt: 'Beach Nearby' },
-                { src: 'images/surround-3.jpg', alt: 'Local Market' },
+                { src: 'ot265/oldtown-2bed-house-aerial-photo-1-web.jpg',    thumb: 'ot265/oldtown-2bed-house-aerial-photo-1-web-thumb.jpg',    alt: 'Aerial View' },
+                { src: 'ot265/oldtown-2bed-house-aerial-photo-2-web.jpg',    thumb: 'ot265/oldtown-2bed-house-aerial-photo-2-web-thumb.jpg',    alt: 'Aerial View' },
+                { src: 'ot265/oldtown-2bed-house-aerial-photo-3-web.jpg',    thumb: 'ot265/oldtown-2bed-house-aerial-photo-3-web-thumb.jpg',    alt: 'Aerial Overview' },
+                { src: 'ot265/oldtown-2bed-house-floorplan-2d-web.jpg',      thumb: 'ot265/oldtown-2bed-house-floorplan-2d-web-thumb.jpg',      alt: 'Floor Plan' },
             ]
         },
 
+        // All images in one flat array — interior → exterior → surroundings
+        get flatImages() {
+            return [
+                ...this.images.interior,
+                ...this.images.exterior,
+                ...this.images.surroundings,
+            ];
+        },
+
+        // First flat index where each category begins
+        get categoryStart() {
+            return {
+                interior:     0,
+                exterior:     this.images.interior.length,
+                surroundings: this.images.interior.length + this.images.exterior.length,
+            };
+        },
+
+        categoryForIndex(idx) {
+            const s = this.categoryStart;
+            if (idx < s.exterior)     return 'interior';
+            if (idx < s.surroundings) return 'exterior';
+            return 'surroundings';
+        },
+
+        // Kept for lightbox compatibility (currentImages[lightboxIndex])
         get currentImages() {
-            return this.images[this.activeCategory] || [];
+            return this.flatImages;
         },
 
+        // Jump to the first image of a category — no slider rebuild needed
         setCategory(cat) {
-            if (cat === this.activeCategory) return;
             this.activeCategory = cat;
-            this.rebuildSliders();
+            if (this.mainSlider) {
+                this.mainSlider.moveToIdx(this.categoryStart[cat]);
+            }
         },
 
-        rebuildSliders() {
+        buildSliders() {
             if (this.mainSlider) { this.mainSlider.destroy(); this.mainSlider = null; }
             if (this.thumbSlider) { this.thumbSlider.destroy(); this.thumbSlider = null; }
 
@@ -92,28 +242,28 @@ document.addEventListener('alpine:init', () => {
             mainEl.innerHTML = '';
             thumbEl.innerHTML = '';
 
-            const imgs = this.currentImages;
+            const imgs = this.flatImages;
 
             imgs.forEach((img, idx) => {
                 const slide = document.createElement('div');
                 slide.className = 'keen-slider__slide';
 
                 const inner = document.createElement('div');
-                inner.className = 'relative w-full h-full bg-earth-pill flex items-center justify-center cursor-pointer';
-                inner.style.aspectRatio = '16 / 10';
+                inner.className = 'relative w-full bg-earth-pill flex items-center justify-center cursor-pointer overflow-hidden';
+                inner.style.aspectRatio = '3 / 2';
 
                 const imgEl = document.createElement('img');
                 imgEl.src = img.src;
                 imgEl.alt = img.alt;
                 imgEl.className = 'absolute inset-0 w-full h-full object-cover';
+                imgEl.onload = function() {
+                    if (this.naturalHeight > this.naturalWidth) {
+                        this.className = 'absolute inset-0 w-full h-full object-contain';
+                    }
+                };
                 imgEl.onerror = function() { this.style.display = 'none'; };
 
-                const label = document.createElement('span');
-                label.className = 'text-earth-secondary text-lg z-10';
-                label.textContent = img.alt;
-
                 inner.appendChild(imgEl);
-                inner.appendChild(label);
                 inner.addEventListener('click', () => this.openLightbox(idx));
                 slide.appendChild(inner);
                 mainEl.appendChild(slide);
@@ -124,43 +274,42 @@ document.addEventListener('alpine:init', () => {
                 slide.className = 'keen-slider__slide';
 
                 const inner = document.createElement('div');
-                inner.className = 'relative h-16 md:h-20 bg-earth-pill rounded overflow-hidden flex items-center justify-center cursor-pointer';
+                inner.className = 'relative w-full bg-earth-pill rounded overflow-hidden cursor-pointer';
+                inner.style.aspectRatio = '3 / 2';
 
                 const imgEl = document.createElement('img');
-                imgEl.src = img.src;
+                imgEl.src = img.thumb || img.src;
                 imgEl.alt = img.alt;
-                imgEl.className = 'absolute inset-0 w-full h-full object-cover';
+                imgEl.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
                 imgEl.onerror = function() { this.style.display = 'none'; };
 
-                const label = document.createElement('span');
-                label.className = 'text-earth-secondary text-xs z-10';
-                label.textContent = img.alt;
-
                 inner.appendChild(imgEl);
-                inner.appendChild(label);
                 inner.addEventListener('click', () => this.goToSlide(idx));
                 slide.appendChild(inner);
                 thumbEl.appendChild(slide);
             });
 
             this.thumbSlider = new KeenSlider(thumbEl, {
-                slides: { perView: 5, spacing: 8 },
+                slides: { perView: 6, spacing: 6 },
                 breakpoints: {
                     '(max-width: 640px)': {
-                        slides: { perView: 3.5, spacing: 6 },
+                        slides: { perView: 4, spacing: 4 },
                     },
                 },
             });
+
+            const thumbSlides = thumbEl.querySelectorAll('.keen-slider__slide');
+            if (thumbSlides[0]) thumbSlides[0].classList.add('active');
 
             this.mainSlider = new KeenSlider(mainEl, {
                 slides: { perView: 1 },
                 slideChanged: (s) => {
                     const idx = s.track.details.rel;
-                    thumbEl.querySelectorAll('.keen-slider__slide').forEach((el, i) => {
-                        el.classList.toggle('active', i === idx);
-                    });
+                    this.lightboxIndex = idx;
+                    this.activeCategory = this.categoryForIndex(idx);
+                    thumbSlides.forEach((el, i) => el.classList.toggle('active', i === idx));
                     if (this.thumbSlider) {
-                        this.thumbSlider.moveToIdx(Math.max(0, idx - 1));
+                        this.thumbSlider.moveToIdx(Math.max(0, idx - 2));
                     }
                 },
             });
@@ -182,15 +331,15 @@ document.addEventListener('alpine:init', () => {
         },
 
         lightboxPrev() {
-            this.lightboxIndex = (this.lightboxIndex - 1 + this.currentImages.length) % this.currentImages.length;
+            this.lightboxIndex = (this.lightboxIndex - 1 + this.flatImages.length) % this.flatImages.length;
         },
 
         lightboxNext() {
-            this.lightboxIndex = (this.lightboxIndex + 1) % this.currentImages.length;
+            this.lightboxIndex = (this.lightboxIndex + 1) % this.flatImages.length;
         },
 
         init() {
-            this.$nextTick(() => this.rebuildSliders());
+            this.$nextTick(() => this.buildSliders());
         },
 
         destroy() {
