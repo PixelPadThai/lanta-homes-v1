@@ -191,6 +191,8 @@ function registerAlpine() {
                 inner.style.aspectRatio = '3 / 2';
 
                 const imgEl = document.createElement('img');
+                imgEl.loading = 'lazy';
+                imgEl.decoding = 'async';
                 imgEl.src = img.src;
                 imgEl.alt = img.alt;
                 imgEl.className = 'absolute inset-0 w-full h-full object-cover';
@@ -216,6 +218,8 @@ function registerAlpine() {
                 inner.style.aspectRatio = '3 / 2';
 
                 const imgEl = document.createElement('img');
+                imgEl.loading = 'lazy';
+                imgEl.decoding = 'async';
                 imgEl.src = img.src;
                 imgEl.alt = img.alt;
                 imgEl.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';

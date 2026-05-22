@@ -22,11 +22,11 @@
     <meta name="twitter:image" content="https://lanta.homes/ot265/hero-web-mobile.jpg">
 
     <!-- Preload the LCP hero (responsive: lighter image on mobile) -->
-    <link rel="preload" as="image" href="hero-web-mobile.jpg" media="(max-width: 1023px)">
-    <link rel="preload" as="image" href="hero-web.jpg" media="(min-width: 1024px)">
+    <link rel="preload" as="image" href="hero-web-mobile.jpg" media="(max-width: 1023px)" fetchpriority="high">
+    <link rel="preload" as="image" href="hero-web.jpg" media="(min-width: 1024px)" fetchpriority="high">
 
     <!-- Self-hosted fonts (Inter + Playfair Display) -->
-    <link rel="stylesheet" href="css/fonts.css?v=1">
+    <link rel="stylesheet" href="css/fonts.css?v=2">
 
     <!-- Favicons (relative paths — listing is served under /ot265/) -->
     <link rel="icon" type="image/png" href="favicon-96x96.png?v=20260522" sizes="96x96" />
@@ -528,7 +528,7 @@
     <!-- Keen Slider JS (self-hosted) -->
     <script src="js/keen-slider.min.js?v=6"></script>
     <!-- App JS (registers stores/components before Alpine init) -->
-    <script src="js/app.js?v=16"></script>
+    <script src="js/app.js?v=17"></script>
     <!-- Alpine.js (self-hosted, deferred — fires alpine:init after page parses) -->
     <script defer src="js/alpine.min.js?v=3"></script>
 </body>
