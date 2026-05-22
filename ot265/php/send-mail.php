@@ -1,6 +1,28 @@
 <?php
 header('Content-Type: application/json');
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require __DIR__ . '/PHPMailer/Exception.php';
+require __DIR__ . '/PHPMailer/PHPMailer.php';
+require __DIR__ . '/PHPMailer/SMTP.php';
+
+// Config via environment (set in Coolify / Docker). Defaults match the
+// poste.io server on the VPS; only SMTP_PASS has no default and is required.
+function env_val($key, $default = null) {
+    $v = getenv($key);
+    return ($v === false || $v === '') ? $default : $v;
+}
+
+$SMTP_HOST = env_val('SMTP_HOST', 'mail.lanta.fun');
+$SMTP_PORT = (int) env_val('SMTP_PORT', 587);
+$SMTP_USER = env_val('SMTP_USER', 'noreply@lanta.homes');
+$SMTP_PASS = env_val('SMTP_PASS');
+$MAIL_FROM = env_val('MAIL_FROM', 'noreply@lanta.homes');
+$MAIL_TO   = env_val('MAIL_TO', 'noreply@lanta.homes');
+
 // Only accept POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -48,26 +70,48 @@ if (preg_match('/[\r\n]/', $email) || preg_match('/[\r\n]/', $name)) {
     exit;
 }
 
-// Build email
-$to      = 'agent@example.com'; // PLACEHOLDER — replace with real email
-$subject = "Baan Sawan Inquiry from $name";
+// Server misconfiguration — no SMTP password set
+if (empty($SMTP_PASS)) {
+    http_response_code(500);
+    error_log('send-mail.php: SMTP_PASS is not set');
+    echo json_encode(['success' => false, 'error' => 'Mail server not configured']);
+    exit;
+}
 
+// Build email body
+$subject = "Baan Sawan Inquiry from $name";
 $body  = "New inquiry from the Baan Sawan property listing:\n\n";
 $body .= "Name:    $name\n";
 $body .= "Email:   $email\n";
 $body .= "Phone:   $phone\n\n";
 $body .= "Message:\n$message\n";
 
-$headers  = "From: noreply@example.com\r\n"; // PLACEHOLDER — replace with real domain
-$headers .= "Reply-To: $email\r\n";
-$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+$mail = new PHPMailer(true);
 
-// Send
-$sent = mail($to, $subject, $body, $headers);
+try {
+    $mail->isSMTP();
+    $mail->Host       = $SMTP_HOST;
+    $mail->SMTPAuth   = true;
+    $mail->Username   = $SMTP_USER;
+    $mail->Password   = $SMTP_PASS;
+    $mail->Port       = $SMTP_PORT;
+    // 587 -> STARTTLS, 465 -> implicit TLS
+    $mail->SMTPSecure = ($SMTP_PORT === 465)
+        ? PHPMailer::ENCRYPTION_SMTPS
+        : PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->CharSet    = PHPMailer::CHARSET_UTF8;
 
-if ($sent) {
+    $mail->setFrom($MAIL_FROM, 'Baan Sawan Listing');
+    $mail->addAddress($MAIL_TO);
+    $mail->addReplyTo($email, $name);
+
+    $mail->Subject = $subject;
+    $mail->Body    = $body;
+
+    $mail->send();
     echo json_encode(['success' => true]);
-} else {
+} catch (Exception $e) {
     http_response_code(500);
+    error_log('send-mail.php: ' . $mail->ErrorInfo);
     echo json_encode(['success' => false, 'error' => 'Failed to send email']);
 }
