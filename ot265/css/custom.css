@@ -133,4 +133,10 @@ html:not(.lang-ready) [x-text] {
 
 .video-placeholder {
     background: linear-gradient(135deg, #3D3229 0%, #8B7355 50%, #C4956A 100%);
+    aspect-ratio: 4 / 5; /* mobile: portrait */
+}
+@media (min-width: 1024px) {
+    .video-placeholder {
+        aspect-ratio: 16 / 9; /* desktop */
+    }
 }
