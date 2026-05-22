@@ -94,11 +94,17 @@
     <!-- Everything below the hero scrolls up over the pinned mobile hero -->
     <div class="content-over-hero">
 
-    <!-- Mobile info bar (sticky below hero, hidden on lg+) — price pill only -->
+    <!-- Mobile info bar (sticky below hero, hidden on lg+) -->
     <div class="lg:hidden sticky top-0 z-40 bg-white border-b border-earth-pill shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-end">
-            <span class="bg-earth-accent text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap"
-                  x-text="$store.lang.t('pill_price')"></span>
+        <div class="max-w-6xl mx-auto px-4 py-2">
+            <p class="font-heading text-lg font-semibold text-earth-text leading-tight"
+               x-text="$store.lang.t('hero_mobile_title')"></p>
+            <div class="flex items-center justify-between gap-3">
+                <span class="text-sm text-earth-secondary"
+                      x-text="$store.lang.t('hero_mobile_location')"></span>
+                <span class="bg-earth-accent text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap"
+                      x-text="$store.lang.t('pill_price')"></span>
+            </div>
         </div>
     </div>
 
