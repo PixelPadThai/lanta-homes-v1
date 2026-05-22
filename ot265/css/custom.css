@@ -104,7 +104,7 @@ html {
 }
 
 .reveal-visible {
-    animation: fade-in-up 0.7s ease-out forwards;
+    animation: fade-in-up 0.7s ease-out var(--reveal-delay, 0ms) forwards;
 }
 
 /* ── Video Section ─────────────────────────────────────────── */

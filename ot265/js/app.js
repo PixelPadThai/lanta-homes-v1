@@ -145,10 +145,12 @@ function registerAlpine() {
     }));
 
     // ── Scroll Reveal ───────────────────────────────────────────
-    Alpine.data('scrollReveal', () => ({
+    Alpine.data('scrollReveal', (delay = 0) => ({
         revealed: false,
 
         init() {
+            if (delay) this.$el.style.setProperty('--reveal-delay', delay + 'ms');
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -172,42 +174,40 @@ function registerAlpine() {
 
         images: {
             exterior: [
-                // Front shots — shown first in gallery
-                { src: 'oldtown-2bed-house-front-1-web.jpg',           thumb: 'oldtown-2bed-house-front-1-web-thumb.jpg',           alt: 'Front of House',        group: 'Front Exterior' },
-                { src: 'oldtown-2bed-house-front-2-web.jpg',           thumb: 'oldtown-2bed-house-front-2-web-thumb.jpg',           alt: 'Front Facade',          group: 'Front Exterior' },
-                { src: 'oldtown-2bed-house-front-3-web.jpg',           thumb: 'oldtown-2bed-house-front-3-web-thumb.jpg',           alt: 'Front View',            group: 'Front Exterior' },
-                { src: 'oldtown-2bed-house-front-4-web.jpg',           thumb: 'oldtown-2bed-house-front-4-web-thumb.jpg',           alt: 'Carport & Entrance',    group: 'Front Exterior' },
-                // Back shots — shown after interior
-                { src: 'oldtown-2bed-house-back-side-1-web.jpg',       thumb: 'oldtown-2bed-house-back-side-1-web-thumb.jpg',       alt: 'Back of House',         group: 'Back & Sides' },
-                { src: 'oldtown-2bed-house-back-side-2-web.jpg',       thumb: 'oldtown-2bed-house-back-side-2-web-thumb.jpg',       alt: 'Back Exterior',         group: 'Back & Sides' },
-                { src: 'oldtown-2bed-house-back-side-view-1-web.jpg',  thumb: 'oldtown-2bed-house-back-side-view-1-web-thumb.jpg',  alt: 'Rear Garden View',      group: 'Back & Sides' },
-                { src: 'oldtown-2bed-house-back-side-view-2-web.jpg',  thumb: 'oldtown-2bed-house-back-side-view-2-web-thumb.jpg',  alt: 'Rear View',             group: 'Back & Sides' },
-                { src: 'oldtown-2bed-house-back-west-side-1-web.jpg',  thumb: 'oldtown-2bed-house-back-west-side-1-web-thumb.jpg',  alt: 'West Side',             group: 'Back & Sides' },
+                { src: 'gallery-images/oldtown-2bed-house-1-front-1-web.jpg',           alt: 'Front of House',      group: 'Front Exterior' },
+                { src: 'gallery-images/oldtown-2bed-house-1-front-2-web.jpg',           alt: 'Front Facade',        group: 'Front Exterior' },
+                { src: 'gallery-images/oldtown-2bed-house-1-front-3-web.jpg',           alt: 'Front View',          group: 'Front Exterior' },
+                { src: 'gallery-images/oldtown-2bed-house-10-back-west-side-1-web.jpg', alt: 'West Side',           group: 'Back & Sides' },
+                { src: 'gallery-images/oldtown-2bed-house-11-back-side-1-web.jpg',      alt: 'Back of House',       group: 'Back & Sides' },
+                { src: 'gallery-images/oldtown-2bed-house-11-back-side-2-web.jpg',      alt: 'Back Exterior',       group: 'Back & Sides' },
+                { src: 'gallery-images/oldtown-2bed-house-12-back-side-view-1-web.jpg', alt: 'Rear Garden View',    group: 'Back & Sides' },
+                { src: 'gallery-images/oldtown-2bed-house-12-back-side-view-2-web.jpg', alt: 'Rear View',           group: 'Back & Sides' },
             ],
             interior: [
-                { src: 'oldtown-2bed-house-entry-room-1-web.jpg',      thumb: 'oldtown-2bed-house-entry-room-1-web-thumb.jpg',      alt: 'Living & Dining Area',  group: 'Living & Dining' },
-                { src: 'oldtown-2bed-house-entry-room-2-web.jpg',      thumb: 'oldtown-2bed-house-entry-room-2-web-thumb.jpg',      alt: 'Dining Area',           group: 'Living & Dining' },
-                { src: 'oldtown-2bed-house-entry-room-3-web.jpg',      thumb: 'oldtown-2bed-house-entry-room-3-web-thumb.jpg',      alt: 'Living Room',           group: 'Living & Dining' },
-                { src: 'oldtown-2bed-house-kitchen-1-web.jpg',         thumb: 'oldtown-2bed-house-kitchen-1-web-thumb.jpg',         alt: 'Kitchen',               group: 'Kitchen' },
-                { src: 'oldtown-2bed-house-kitchen-2-web.jpg',         thumb: 'oldtown-2bed-house-kitchen-2-web-thumb.jpg',         alt: 'Kitchen Peninsula',     group: 'Kitchen' },
-                { src: 'oldtown-2bed-house-kitchen-3-web.jpg',         thumb: 'oldtown-2bed-house-kitchen-3-web-thumb.jpg',         alt: 'Kitchen',               group: 'Kitchen' },
-                { src: 'oldtown-2bed-house-kitchen-4-web.jpg',         thumb: 'oldtown-2bed-house-kitchen-4-web-thumb.jpg',         alt: 'Kitchen',               group: 'Kitchen' },
-                { src: 'oldtown-2bed-house-kitchen-5-web.jpg',         thumb: 'oldtown-2bed-house-kitchen-5-web-thumb.jpg',         alt: 'Kitchen View',          group: 'Kitchen' },
-                { src: 'oldtown-2bed-house-bedroom-1-1-web.jpg',       thumb: 'oldtown-2bed-house-bedroom-1-1-web-thumb.jpg',       alt: 'Master Bedroom',        group: 'Master Bedroom' },
-                { src: 'oldtown-2bed-house-bedroom-1-2-web.jpg',       thumb: 'oldtown-2bed-house-bedroom-1-2-web-thumb.jpg',       alt: 'Master Bedroom',        group: 'Master Bedroom' },
-                { src: 'oldtown-2bed-house-bedroom-1-3-web.jpg',       thumb: 'oldtown-2bed-house-bedroom-1-3-web-thumb.jpg',       alt: 'Master Bedroom',        group: 'Master Bedroom' },
-                { src: 'oldtown-2bed-house-bedroom-1-toilet-1-web.jpg',thumb: 'oldtown-2bed-house-bedroom-1-toilet-1-web-thumb.jpg',alt: 'En-suite Bathroom',     group: 'En-suite Bathroom' },
-                { src: 'oldtown-2bed-house-bedroom-1-toilet-2-web.jpg',thumb: 'oldtown-2bed-house-bedroom-1-toilet-2-web-thumb.jpg',alt: 'En-suite Bathroom',     group: 'En-suite Bathroom' },
-                { src: 'oldtown-2bed-house-bedroom-2-1-web.jpg',       thumb: 'oldtown-2bed-house-bedroom-2-1-web-thumb.jpg',       alt: 'Second Bedroom',        group: 'Second Bedroom' },
-                { src: 'oldtown-2bed-house-bedroom-2-2-web.jpg',       thumb: 'oldtown-2bed-house-bedroom-2-2-web-thumb.jpg',       alt: 'Second Bedroom',        group: 'Second Bedroom' },
-                { src: 'oldtown-2bed-house-bedroom-2-3-web.jpg',       thumb: 'oldtown-2bed-house-bedroom-2-3-web-thumb.jpg',       alt: 'Second Bedroom',        group: 'Second Bedroom' },
-                { src: 'oldtown-2bed-house-detached-toilet-1-web.jpg', thumb: 'oldtown-2bed-house-detached-toilet-1-web-thumb.jpg', alt: 'Bathroom',              group: 'Second Bathroom' },
+                { src: 'gallery-images/oldtown-2bed-house-2-entry-room-2-web.jpg',       alt: 'Entry Room',          group: 'Living & Dining' },
+                { src: 'gallery-images/oldtown-2bed-house-3-kitchen-1-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
+                { src: 'gallery-images/oldtown-2bed-house-3-kitchen-2-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
+                { src: 'gallery-images/oldtown-2bed-house-3-kitchen-3-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
+                { src: 'gallery-images/oldtown-2bed-house-4-bedroom-1-1-web.jpg',        alt: 'Master Bedroom',      group: 'Master Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-4-bedroom-1-2-web.jpg',        alt: 'Master Bedroom',      group: 'Master Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-4-bedroom-1-3-web.jpg',        alt: 'Master Bedroom',      group: 'Master Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-5-detached-toilet-1-web.jpg',  alt: 'Detached Bathroom',   group: 'Detached Bathroom' },
+                { src: 'gallery-images/oldtown-2bed-house-6-bedroom-2-1-web.jpg',        alt: 'Second Bedroom',      group: 'Second Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-6-bedroom-2-2-web.jpg',        alt: 'Second Bedroom',      group: 'Second Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-6-bedroom-2-3-web.jpg',        alt: 'Second Bedroom',      group: 'Second Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-7-bedroom-2-toilet-1-web.jpg', alt: 'Bedroom 2 Bathroom',  group: 'Bedroom 2 Bathroom' },
+                { src: 'gallery-images/oldtown-2bed-house-7-bedroom-2-toilet-2-web.jpg', alt: 'Bedroom 2 Bathroom',  group: 'Bedroom 2 Bathroom' },
+                { src: 'gallery-images/oldtown-2bed-house-8-kitchen-1-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
+                { src: 'gallery-images/oldtown-2bed-house-8-kitchen-2-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
+                { src: 'gallery-images/oldtown-2bed-house-9-entry-1-web.jpg',            alt: 'Entry',               group: 'Living & Dining' },
+                { src: 'gallery-images/oldtown-2bed-house-9-entry-room-1-web.jpg',       alt: 'Entry Room',          group: 'Living & Dining' },
+                { src: 'gallery-images/oldtown-2bed-house-9-entry-room-2-web.jpg',       alt: 'Entry Room',          group: 'Living & Dining' },
             ],
             surroundings: [
-                { src: 'oldtown-2bed-house-aerial-photo-1-web.jpg',    thumb: 'oldtown-2bed-house-aerial-photo-1-web-thumb.jpg',    alt: 'Aerial View',           group: 'Aerial Photos' },
-                { src: 'oldtown-2bed-house-aerial-photo-2-web.jpg',    thumb: 'oldtown-2bed-house-aerial-photo-2-web-thumb.jpg',    alt: 'Aerial View',           group: 'Aerial Photos' },
-                { src: 'oldtown-2bed-house-aerial-photo-3-web.jpg',    thumb: 'oldtown-2bed-house-aerial-photo-3-web-thumb.jpg',    alt: 'Aerial Overview',       group: 'Aerial Photos' },
-                { src: 'oldtown-2bed-house-floorplan-2d-web.jpg',      thumb: 'oldtown-2bed-house-floorplan-2d-web-thumb.jpg',      alt: 'Floor Plan',            group: 'Floor Plan' },
+                { src: 'gallery-images/oldtown-2bed-house-13-aerial-photo-1-web.jpg',   alt: 'Aerial View',         group: 'Aerial Photos' },
+                { src: 'gallery-images/oldtown-2bed-house-13-aerial-photo-2-web.jpg',   alt: 'Aerial View',         group: 'Aerial Photos' },
+                { src: 'gallery-images/oldtown-2bed-house-13-aerial-photo-3-web.jpg',   alt: 'Aerial Overview',     group: 'Aerial Photos' },
+                { src: 'gallery-images/oldtown-2bed-house-14-floorplan-2d-web.jpg',     alt: 'Floor Plan',          group: 'Floor Plan' },
             ]
         },
 
@@ -311,7 +311,7 @@ function registerAlpine() {
                 inner.style.aspectRatio = '3 / 2';
 
                 const imgEl = document.createElement('img');
-                imgEl.src = img.thumb || img.src;
+                imgEl.src = img.src;
                 imgEl.alt = img.alt;
                 imgEl.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
                 imgEl.onerror = function() { this.style.display = 'none'; };
@@ -357,9 +357,8 @@ function registerAlpine() {
             this.lightboxOpen = true;
             document.body.style.overflow = 'hidden';
             this.$nextTick(() => {
-                const container = this.$refs.lightboxScroller;
-                if (!container) return;
-                const target = container.querySelector(`[data-lb-idx="${idx}"]`);
+                // Lightbox is teleported to <body>, so $refs can't reach it — query the document.
+                const target = document.querySelector(`[data-lb-idx="${idx}"]`);
                 if (target) target.scrollIntoView({ block: 'start' });
             });
         },

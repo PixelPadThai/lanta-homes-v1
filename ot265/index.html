@@ -66,7 +66,7 @@
     </div>
 
     <!-- Hero Section -->
-    <section data-hero class="relative w-full aspect-[4/3] lg:aspect-auto lg:h-screen flex items-center justify-center" style="background-image:url('hero-web.jpg');background-size:cover;background-position:center;background-color:#8B7355;">
+    <section data-hero class="lg:relative w-full aspect-[4/3] lg:aspect-auto lg:h-screen flex items-center justify-center" style="background-image:url('hero-web.jpg');background-size:cover;background-position:center;background-color:#8B7355;">
         <div class="hero-overlay absolute inset-0"></div>
 
         <!-- Desktop text overlay (hidden on mobile) -->
@@ -122,21 +122,27 @@
                 </div>
 
                 <!-- GALLERY — DOM order 2; desktop: col 1-3, row 2 (below both columns) -->
-                <div class="lg:col-span-3 lg:row-start-2 -mx-4 lg:mx-0 mt-10 lg:mt-16" x-data="gallery">
+                <!-- scrollReveal must stay OUTSIDE the gallery component: x-ref="mainSlider"/"thumbSlider"
+                     have to sit under the gallery root with no intervening x-data, or $refs won't resolve
+                     in buildSliders() and the slider builds nothing. -->
+                <div class="lg:col-span-3 lg:row-start-2 -mx-4 lg:mx-0 mt-10 lg:mt-16"
+                     x-data="scrollReveal"
+                     :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
+                  <div x-data="gallery">
                     <div class="bg-white py-12 lg:py-16 px-4 lg:px-6 lg:rounded-2xl">
                         <h2 class="font-heading text-3xl md:text-4xl text-center mb-8"
                             x-text="$store.lang.t('gallery_title')"></h2>
 
                         <!-- Category Tabs -->
                         <div class="flex justify-center gap-2 mb-8">
-                            <button @click="setCategory('interior')"
-                                    :class="activeCategory === 'interior' ? 'bg-earth-accent text-white' : 'bg-earth-pill text-earth-pill-text hover:bg-earth-accent/20'"
-                                    class="px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer"
-                                    x-text="$store.lang.t('gallery_interior')"></button>
                             <button @click="setCategory('exterior')"
                                     :class="activeCategory === 'exterior' ? 'bg-earth-accent text-white' : 'bg-earth-pill text-earth-pill-text hover:bg-earth-accent/20'"
                                     class="px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer"
                                     x-text="$store.lang.t('gallery_exterior')"></button>
+                            <button @click="setCategory('interior')"
+                                    :class="activeCategory === 'interior' ? 'bg-earth-accent text-white' : 'bg-earth-pill text-earth-pill-text hover:bg-earth-accent/20'"
+                                    class="px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer"
+                                    x-text="$store.lang.t('gallery_interior')"></button>
                             <button @click="setCategory('surroundings')"
                                     :class="activeCategory === 'surroundings' ? 'bg-earth-accent text-white' : 'bg-earth-pill text-earth-pill-text hover:bg-earth-accent/20'"
                                     class="px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer"
@@ -164,9 +170,12 @@
                         <div x-ref="thumbSlider" class="keen-slider thumb-slider"></div>
                     </div>
 
-                    <!-- Lightbox: scrollable column of all images with section headers -->
+                    <!-- Lightbox: scrollable column of all images with section headers.
+                         Teleported to <body> so position:fixed anchors to the viewport — the
+                         scrollReveal wrapper's lingering transform (fade-in-up ends at translateY(0),
+                         not none) would otherwise become its containing block and trap it in the grid. -->
+                    <template x-teleport="body">
                     <div x-show="lightboxOpen" x-transition.opacity
-                         x-ref="lightboxScroller"
                          class="fixed inset-0 z-50 bg-black/95 overflow-y-auto"
                          @keydown.escape.window="if (lightboxOpen) closeLightbox()">
 
@@ -200,10 +209,14 @@
                             </template>
                         </div>
                     </div>
+                    </template>
+                  </div>
                 </div>
 
                 <!-- INFO CARD — DOM order 3; desktop: col 3, row 1 (sticky alongside text) -->
-                <div class="lg:col-start-3 lg:row-start-1 mt-10 lg:mt-0">
+                <div class="lg:col-start-3 lg:row-start-1 mt-10 lg:mt-0"
+                     x-data="scrollReveal(150)"
+                     :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
                     <div class="bg-white rounded-2xl shadow-md border border-earth-pill overflow-hidden">
 
                         <!-- Price header -->
@@ -270,7 +283,9 @@
     </section>
 
     <!-- Drone Video -->
-    <section class="py-16 md:py-24" x-data="droneVideo">
+    <section class="py-16 md:py-24"
+             x-data="scrollReveal"
+             :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
         <div class="max-w-6xl mx-auto px-4">
             <h2 class="font-heading text-3xl md:text-4xl text-center mb-3"
                 x-text="$store.lang.t('video_title')"></h2>
@@ -278,7 +293,7 @@
                x-text="$store.lang.t('video_subtitle')"></p>
         </div>
 
-        <div class="relative max-w-6xl mx-auto px-4">
+        <div class="relative max-w-6xl mx-auto px-4" x-data="droneVideo">
             <div class="video-container relative rounded-xl overflow-hidden shadow-lg">
                 <div class="video-placeholder w-full flex items-center justify-center"
                      style="aspect-ratio: 16/9;">
@@ -383,7 +398,9 @@
     </section>
 
     <!-- Location Map -->
-    <section class="py-16 md:py-24">
+    <section class="py-16 md:py-24"
+             x-data="scrollReveal"
+             :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
         <div class="max-w-5xl mx-auto px-4">
             <h2 class="font-heading text-3xl md:text-4xl text-center mb-8"
                 x-text="$store.lang.t('map_title')"></h2>
@@ -404,6 +421,7 @@
     </section>
 
     <!-- Contact Section -->
+    <div x-data="scrollReveal" :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
     <section id="contact" class="py-16 md:py-24 bg-white" x-data="contactForm">
         <div class="max-w-5xl mx-auto px-4">
             <h2 class="font-heading text-3xl md:text-4xl text-center mb-3"
@@ -491,9 +509,12 @@
             </div>
         </div>
     </section>
+    </div><!-- /contact reveal wrapper -->
 
     <!-- Footer -->
-    <footer class="py-8 border-t border-earth-pill">
+    <footer class="py-8 border-t border-earth-pill"
+            x-data="scrollReveal"
+            :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
         <div class="max-w-5xl mx-auto px-4 text-center text-earth-secondary text-sm">
             <p class="font-heading text-lg mb-2">Baan Sawan</p>
             <p>
@@ -512,7 +533,7 @@
     <!-- Keen Slider JS -->
     <script src="https://cdn.jsdelivr.net/npm/keen-slider@6/keen-slider.min.js"></script>
     <!-- App JS (registers stores/components before Alpine init) -->
-    <script src="js/app.js?v=9"></script>
+    <script src="js/app.js?v=13"></script>
     <!-- Alpine.js (deferred — fires alpine:init after page parses) -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 </body>
