@@ -90,17 +90,11 @@
     <!-- Everything below the hero scrolls up over the pinned mobile hero -->
     <div class="content-over-hero">
 
-    <!-- Mobile info bar (sticky below hero, hidden on lg+) -->
+    <!-- Mobile info bar (sticky below hero, hidden on lg+) — price pill only -->
     <div class="lg:hidden sticky top-0 z-40 bg-white border-b border-earth-pill shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-2">
-            <p class="font-heading text-lg font-semibold text-earth-text leading-tight"
-               x-text="$store.lang.t('hero_mobile_title')"></p>
-            <div class="flex items-center justify-between gap-3">
-                <span class="text-sm text-earth-secondary"
-                      x-text="$store.lang.t('hero_mobile_location')"></span>
-                <span class="bg-earth-accent text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap"
-                      x-text="$store.lang.t('pill_price')"></span>
-            </div>
+        <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-end">
+            <span class="bg-earth-accent text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap"
+                  x-text="$store.lang.t('pill_price')"></span>
         </div>
     </div>
 
@@ -482,12 +476,10 @@
                 <div class="flex flex-col justify-center space-y-6">
                     <!-- Agent Info -->
                     <div class="flex items-center gap-3 justify-center md:justify-start">
-                        <!-- Profile circle (placeholder — swap the inner SVG for an <img> of the agent) -->
-                        <div class="w-12 h-12 rounded-full bg-earth-pill flex items-center justify-center flex-shrink-0 overflow-hidden">
-                            <svg class="w-7 h-7 text-earth-pill-text" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                        </div>
+                        <!-- Agent profile photo -->
+                        <img src="images/bee-profile.jpg" alt="Bee"
+                             class="w-12 h-12 rounded-full object-cover flex-shrink-0">
+
                         <div class="text-left">
                             <p class="text-earth-secondary text-sm mb-0.5"
                                x-text="$store.lang.t('contact_agent')"></p>
@@ -524,13 +516,16 @@
             x-data="scrollReveal"
             :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
         <div class="max-w-5xl mx-auto px-4 text-center text-earth-secondary text-sm">
-            <p class="font-heading text-lg mb-2">Baan Sawan</p>
-            <p>
-                <span x-text="$store.lang.t('footer_listed_by')"></span>
-                <span x-text="$store.lang.t('contact_agent_name')"></span>
+            <img src="images/lanta-homes-logo.png" alt="Lanta.Homes" class="h-9 w-auto mx-auto mb-3">
+            <p class="flex items-center justify-center gap-2">
+                <img src="images/bee-profile.jpg" alt="Bee" class="w-7 h-7 rounded-full object-cover">
+                <span>
+                    <span x-text="$store.lang.t('footer_listed_by')"></span>
+                    <span x-text="$store.lang.t('contact_agent_name')"></span>
+                </span>
             </p>
             <p class="mt-2">
-                &copy; 2026 Baan Sawan.
+                &copy; 2026 Lanta.Homes.
                 <span x-text="$store.lang.t('footer_rights')"></span>
             </p>
         </div>
@@ -541,7 +536,7 @@
     <!-- Keen Slider JS -->
     <script src="https://cdn.jsdelivr.net/npm/keen-slider@6/keen-slider.min.js"></script>
     <!-- App JS (registers stores/components before Alpine init) -->
-    <script src="js/app.js?v=15"></script>
+    <script src="js/app.js?v=16"></script>
     <!-- Alpine.js (deferred — fires alpine:init after page parses) -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 </body>

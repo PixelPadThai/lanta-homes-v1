@@ -12,7 +12,9 @@ function registerAlpine() {
             // lang.json is the single source of truth. Must be served over HTTP
             // (php -S in dev, Apache in prod) — fetch() is blocked on file://.
             try {
-                const res = await fetch('lang.json');
+                // no-cache: revalidate against the server each load so text
+                // edits appear after deploy without a cache-buster to juggle.
+                const res = await fetch('lang.json', { cache: 'no-cache' });
                 if (res.ok) this.data = await res.json();
             } catch (e) {
                 console.error('Failed to load lang.json', e);
