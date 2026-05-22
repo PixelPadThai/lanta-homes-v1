@@ -86,10 +86,21 @@ $body .= "Email:   $email\n";
 $body .= "Phone:   $phone\n\n";
 $body .= "Message:\n$message\n";
 
+// TEMPORARY diagnostic: append ?debug=KohLanta2026 to the URL to get the raw
+// SMTP error + transcript back in the JSON. REMOVE once the form is verified.
+$DEBUG = (($_GET['debug'] ?? '') === 'KohLanta2026');
+$debugLog = '';
+
 $mail = new PHPMailer(true);
 
 try {
     $mail->isSMTP();
+    if ($DEBUG) {
+        $mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
+        $mail->Debugoutput = function ($str, $level) use (&$debugLog) {
+            $debugLog .= $str . "\n";
+        };
+    }
     $mail->Host       = $SMTP_HOST;
     $mail->SMTPAuth   = true;
     $mail->Username   = $SMTP_USER;
@@ -100,6 +111,20 @@ try {
         ? PHPMailer::ENCRYPTION_SMTPS
         : PHPMailer::ENCRYPTION_STARTTLS;
     $mail->CharSet    = PHPMailer::CHARSET_UTF8;
+
+    // The mail server is poste.io on the same VPS, presenting its built-in
+    // self-signed cert. Skip peer verification (traffic is still encrypted).
+    // Set SMTP_STRICT_TLS=1 to require a valid cert (e.g. after configuring
+    // a Let's Encrypt cert for the mail host in poste.io).
+    if (env_val('SMTP_STRICT_TLS') !== '1') {
+        $mail->SMTPOptions = [
+            'ssl' => [
+                'verify_peer'       => false,
+                'verify_peer_name'  => false,
+                'allow_self_signed' => true,
+            ],
+        ];
+    }
 
     $mail->setFrom($MAIL_FROM, 'Baan Sawan Listing');
     $mail->addAddress($MAIL_TO);
@@ -113,5 +138,11 @@ try {
 } catch (Exception $e) {
     http_response_code(500);
     error_log('send-mail.php: ' . $mail->ErrorInfo);
-    echo json_encode(['success' => false, 'error' => 'Failed to send email']);
+    $out = ['success' => false, 'error' => 'Failed to send email'];
+    if ($DEBUG) {
+        $out['debug_error'] = $mail->ErrorInfo;
+        $out['debug_log']   = $debugLog;
+        $out['config']      = ['host' => $SMTP_HOST, 'port' => $SMTP_PORT, 'user' => $SMTP_USER];
+    }
+    echo json_encode($out);
 }
