@@ -9,49 +9,40 @@
     <!-- Open Graph -->
     <meta property="og:title" content="Modern 2-Bed House Near Old Town, Koh Lanta - 1,950,000 THB">
     <meta property="og:description" content="Architect-styled 2-bed house near Old Town, Koh Lanta. 100 m², Chanote title, built 2016. Vaulted ceilings, microcement bathrooms, butterfly roof. Sold as-is - interior move-in ready.">
-    <meta property="og:image" content="hero-web.jpg">
+    <meta property="og:image" content="https://lanta.homes/ot265/hero-web-mobile.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="800">
+    <meta property="og:url" content="https://lanta.homes/ot265/">
     <meta property="og:type" content="website">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Modern 2-Bed House Near Old Town, Koh Lanta - 1,950,000 THB">
+    <meta name="twitter:description" content="Architect-styled 2-bed house near Old Town, Koh Lanta. 100 m², Chanote title, built 2016. Sold as-is - interior move-in ready.">
+    <meta name="twitter:image" content="https://lanta.homes/ot265/hero-web-mobile.jpg">
+
+    <!-- Preload the LCP hero (responsive: lighter image on mobile) -->
+    <link rel="preload" as="image" href="hero-web-mobile.jpg" media="(max-width: 1023px)">
+    <link rel="preload" as="image" href="hero-web.jpg" media="(min-width: 1024px)">
+
+    <!-- Self-hosted fonts (Inter + Playfair Display) -->
+    <link rel="stylesheet" href="css/fonts.css?v=1">
+
     <!-- Favicons (relative paths — listing is served under /ot265/) -->
     <link rel="icon" type="image/png" href="favicon-96x96.png?v=20260522" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20260522" />
     <link rel="shortcut icon" href="favicon.ico?v=20260522" />
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260522" />
     <link rel="manifest" href="site.webmanifest?v=20260522" />
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        earth: {
-                            bg: '#FAF6F1',
-                            text: '#3D3229',
-                            accent: '#C4956A',
-                            secondary: '#8B7355',
-                            pill: '#E8DDD3',
-                            'pill-text': '#6B5744',
-                        }
-                    },
-                    fontFamily: {
-                        heading: ['"Playfair Display"', 'serif'],
-                        body: ['"Inter"', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
 
-    <!-- Keen Slider CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@6/keen-slider.min.css">
+    <!-- Compiled Tailwind (recompile: npx tailwindcss@3 -i tailwind-input.css -o ot265/css/tailwind.css --minify) -->
+    <link rel="stylesheet" href="css/tailwind.css?v=1">
+
+    <!-- Keen Slider CSS (self-hosted) -->
+    <link rel="stylesheet" href="css/keen-slider.min.css?v=6">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/custom.css?v=4">
+    <link rel="stylesheet" href="css/custom.css?v=5">
 </head>
 <body class="bg-earth-bg text-earth-text font-body" x-data>
 
@@ -71,7 +62,7 @@
     </div>
 
     <!-- Hero Section -->
-    <section data-hero class="lg:relative w-full aspect-[4/3] lg:aspect-auto lg:h-screen flex items-center justify-center" style="background-image:url('hero-web.jpg');background-size:cover;background-position:center;background-color:#8B7355;">
+    <section data-hero class="lg:relative w-full aspect-[4/3] lg:aspect-auto lg:h-screen flex items-center justify-center" style="background-size:cover;background-position:center;background-color:#8B7355;">
         <div class="hero-overlay absolute inset-0"></div>
 
         <!-- Desktop text overlay (hidden on mobile) -->
@@ -321,15 +312,6 @@
                             <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
                         </svg>
                     </button>
-                    <button @click="toggleMute()"
-                            class="bg-white/80 hover:bg-white rounded-full p-3 shadow-lg transition-all cursor-pointer">
-                        <svg x-show="muted" class="w-5 h-5 text-earth-text" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-                        </svg>
-                        <svg x-show="!muted" class="w-5 h-5 text-earth-text" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                        </svg>
-                    </button>
                 </div>
             </div>
         </div>
@@ -544,11 +526,11 @@
 
     </div><!-- /content-over-hero -->
 
-    <!-- Keen Slider JS -->
-    <script src="https://cdn.jsdelivr.net/npm/keen-slider@6/keen-slider.min.js"></script>
+    <!-- Keen Slider JS (self-hosted) -->
+    <script src="js/keen-slider.min.js?v=6"></script>
     <!-- App JS (registers stores/components before Alpine init) -->
     <script src="js/app.js?v=16"></script>
-    <!-- Alpine.js (deferred — fires alpine:init after page parses) -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+    <!-- Alpine.js (self-hosted, deferred — fires alpine:init after page parses) -->
+    <script defer src="js/alpine.min.js?v=3"></script>
 </body>
 </html>

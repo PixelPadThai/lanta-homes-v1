@@ -11,6 +11,18 @@ html:not(.lang-ready) [x-text] {
 }
 
 /* ── Hero ──────────────────────────────────────────────────── */
+/* Responsive hero background: phones get the lighter 1200px image,
+   desktop (lg, ≥1024px) gets the full 1920px image. Set here (not inline)
+   so the media query can swap it. */
+[data-hero] {
+    background-image: url('../hero-web-mobile.jpg');
+}
+@media (min-width: 1024px) {
+    [data-hero] {
+        background-image: url('../hero-web.jpg');
+    }
+}
+
 .hero-overlay {
     background: linear-gradient(
         to bottom,

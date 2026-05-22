@@ -6,3 +6,7 @@ docs/
 .DS_Store
 Thumbs.db
 *.log
+
+# Tailwind build tooling (compiled locally; the OUTPUT ot265/css/tailwind.css IS committed)
+node_modules/
+package-lock.json

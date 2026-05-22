@@ -1,0 +1,10 @@
+# Keep the production image lean: ship only the served site, not build tooling.
+.git
+.gitignore
+node_modules
+package-lock.json
+package.json
+tailwind.config.js
+tailwind-input.css
+CLAUDE.md
+docs
