@@ -3,6 +3,13 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Lang gate: hide translatable text until lang.json loads, so raw keys
+   (e.g. "hero_title") never flash. JS adds .lang-ready once data is in.
+   visibility (not display) keeps layout stable — no shift. */
+html:not(.lang-ready) [x-text] {
+    visibility: hidden;
+}
+
 /* ── Hero ──────────────────────────────────────────────────── */
 .hero-overlay {
     background: linear-gradient(
