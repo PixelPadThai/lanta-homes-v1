@@ -307,12 +307,12 @@ function registerAlpine() {
                     if (entry.isIntersecting && !this.loaded) {
                         const video = this.$refs.video;
                         if (video && video.dataset.src) {
-                            video.src = video.dataset.src;
-                            video.addEventListener('canplay', () => {
-                                video.play().then(() => { this.playing = true; }).catch(() => {});
-                            }, { once: true });
-                            video.load();
                             this.loaded = true;
+                            video.addEventListener('play',  () => { this.playing = true;  });
+                            video.addEventListener('pause', () => { this.playing = false; });
+                            video.src = video.dataset.src;
+                            video.load();
+                            video.play().catch(() => {});
                         }
                         observer.unobserve(entry.target);
                     }
