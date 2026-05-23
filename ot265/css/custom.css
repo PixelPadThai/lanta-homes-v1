@@ -3,6 +3,12 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Accent background gets a darker shade than the icon/border accent
+   so white text on it passes WCAG AA (4.5:1 contrast). text-earth-accent
+   and border-earth-accent keep the original lighter gold (#C4956A). */
+.bg-earth-accent { background-color: #8B6843; }
+.hover\:bg-earth-accent:hover { background-color: #8B6843; }
+
 /* Lang gate: hide translatable text until lang.json loads, so raw keys
    (e.g. "hero_title") never flash. JS adds .lang-ready once data is in.
    visibility (not display) keeps layout stable — no shift. */

@@ -308,6 +308,27 @@ function registerAlpine() {
         }
     }));
 
+    // ── Lazy Map ────────────────────────────────────────────────
+    // Maps iframe pulls ~350 KB of JS and blocks the main thread.
+    // Swap its src in only when the section scrolls into view so it
+    // stays out of the initial load / LCP critical path.
+    Alpine.data('lazyMap', () => ({
+        init() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const frame = this.$refs.frame;
+                        if (frame && frame.dataset.src && !frame.src) {
+                            frame.src = frame.dataset.src;
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { rootMargin: '200px' });
+            observer.observe(this.$el);
+        }
+    }));
+
     // ── Drone Video ─────────────────────────────────────────────
     Alpine.data('droneVideo', () => ({
         playing: false,

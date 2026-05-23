@@ -33,7 +33,7 @@
     <link rel="manifest" href="site.webmanifest?v=20260522" />
 
     <!-- Bundled stylesheet: tailwind + keen-slider + fonts + custom (see ot265/css/site.css header for rebuild). -->
-    <link rel="stylesheet" href="css/site.css?v=2">
+    <link rel="stylesheet" href="css/site.css?v=3">
 </head>
 <body class="bg-earth-bg text-earth-text font-body" x-data>
 
@@ -460,12 +460,13 @@
             <h2 class="font-heading text-3xl md:text-4xl text-center mb-8"
                 x-text="$store.lang.t('map_title')"></h2>
 
-            <div class="rounded-xl overflow-hidden shadow-lg">
+            <div class="rounded-xl overflow-hidden shadow-lg" x-data="lazyMap">
                 <iframe
-                    src="https://maps.google.com/maps?q=7.5231663,99.0960800&z=14&output=embed"
+                    x-ref="frame"
+                    data-src="https://maps.google.com/maps?q=7.5231663,99.0960800&z=14&output=embed"
                     width="100%"
                     height="400"
-                    style="border:0;"
+                    style="border:0;background:#E8DDD3;"
                     allowfullscreen=""
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
@@ -539,6 +540,7 @@
                     <div class="flex items-center gap-3 justify-center md:justify-start">
                         <!-- Agent profile photo -->
                         <img src="images/bee-profile.jpg" alt="Bee"
+                             width="48" height="48" loading="lazy" decoding="async"
                              class="w-12 h-12 rounded-full object-cover flex-shrink-0">
 
                         <div class="text-left">
@@ -577,9 +579,9 @@
             x-data="scrollReveal"
             :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
         <div class="max-w-5xl mx-auto px-4 text-center text-earth-secondary text-sm">
-            <img src="images/lanta-homes-logo.png" alt="Lanta.Homes" class="h-9 w-auto mx-auto mb-3">
+            <img src="images/lanta-homes-logo.png" alt="Lanta.Homes" width="200" height="36" loading="lazy" decoding="async" class="h-9 w-auto mx-auto mb-3">
             <p class="flex items-center justify-center gap-2">
-                <img src="images/bee-profile.jpg" alt="Bee" class="w-7 h-7 rounded-full object-cover">
+                <img src="images/bee-profile.jpg" alt="Bee" width="28" height="28" loading="lazy" decoding="async" class="w-7 h-7 rounded-full object-cover">
                 <span>
                     <span x-text="$store.lang.t('footer_listed_by')"></span>
                     <span x-text="$store.lang.t('contact_agent_name')"></span>
@@ -597,7 +599,7 @@
     <!-- Keen Slider JS (self-hosted) -->
     <script src="js/keen-slider.min.js?v=6"></script>
     <!-- App JS (registers stores/components before Alpine init) -->
-    <script src="js/app.js?v=20"></script>
+    <script src="js/app.js?v=21"></script>
     <!-- Alpine.js (self-hosted, deferred — fires alpine:init after page parses) -->
     <script defer src="js/alpine.min.js?v=3"></script>
 </body>
