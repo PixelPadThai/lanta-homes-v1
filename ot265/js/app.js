@@ -93,15 +93,15 @@ function registerAlpine() {
                 { src: 'gallery-images/oldtown-2bed-house-3-kitchen-1-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
                 { src: 'gallery-images/oldtown-2bed-house-3-kitchen-2-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
                 { src: 'gallery-images/oldtown-2bed-house-3-kitchen-3-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
-                { src: 'gallery-images/oldtown-2bed-house-4-bedroom-1-1-web.jpg',        alt: 'Master Bedroom',      group: 'Master Bedroom' },
-                { src: 'gallery-images/oldtown-2bed-house-4-bedroom-1-2-web.jpg',        alt: 'Master Bedroom',      group: 'Master Bedroom' },
-                { src: 'gallery-images/oldtown-2bed-house-4-bedroom-1-3-web.jpg',        alt: 'Master Bedroom',      group: 'Master Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-4-bedroom-1-1-web.jpg',        alt: 'Second Bedroom',      group: 'Second Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-4-bedroom-1-2-web.jpg',        alt: 'Second Bedroom',      group: 'Second Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-4-bedroom-1-3-web.jpg',        alt: 'Second Bedroom',      group: 'Second Bedroom' },
                 { src: 'gallery-images/oldtown-2bed-house-5-detached-toilet-1-web.jpg',  alt: 'Detached Bathroom',   group: 'Detached Bathroom' },
-                { src: 'gallery-images/oldtown-2bed-house-6-bedroom-2-1-web.jpg',        alt: 'Second Bedroom',      group: 'Second Bedroom' },
-                { src: 'gallery-images/oldtown-2bed-house-6-bedroom-2-2-web.jpg',        alt: 'Second Bedroom',      group: 'Second Bedroom' },
-                { src: 'gallery-images/oldtown-2bed-house-6-bedroom-2-3-web.jpg',        alt: 'Second Bedroom',      group: 'Second Bedroom' },
-                { src: 'gallery-images/oldtown-2bed-house-7-bedroom-2-toilet-1-web.jpg', alt: 'Bedroom 2 Bathroom',  group: 'Bedroom 2 Bathroom' },
-                { src: 'gallery-images/oldtown-2bed-house-7-bedroom-2-toilet-2-web.jpg', alt: 'Bedroom 2 Bathroom',  group: 'Bedroom 2 Bathroom' },
+                { src: 'gallery-images/oldtown-2bed-house-6-bedroom-2-1-web.jpg',        alt: 'Master Bedroom',      group: 'Master Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-6-bedroom-2-2-web.jpg',        alt: 'Master Bedroom',      group: 'Master Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-6-bedroom-2-3-web.jpg',        alt: 'Master Bedroom',      group: 'Master Bedroom' },
+                { src: 'gallery-images/oldtown-2bed-house-7-bedroom-2-toilet-1-web.jpg', alt: 'Master Bedroom Bathroom',  group: 'Master Bedroom Bathroom' },
+                { src: 'gallery-images/oldtown-2bed-house-7-bedroom-2-toilet-2-web.jpg', alt: 'Master Bedroom Bathroom',  group: 'Master Bedroom Bathroom' },
                 { src: 'gallery-images/oldtown-2bed-house-8-kitchen-1-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
                 { src: 'gallery-images/oldtown-2bed-house-8-kitchen-2-web.jpg',          alt: 'Kitchen',             group: 'Kitchen' },
                 { src: 'gallery-images/oldtown-2bed-house-9-entry-1-web.jpg',            alt: 'Entry',               group: 'Living & Dining' },
@@ -156,7 +156,14 @@ function registerAlpine() {
                     items.push({ type: 'header', title: img.group });
                     lastGroup = img.group;
                 }
-                items.push({ type: 'image', src: img.src, alt: img.alt, flatIdx: idx });
+                const mobileSrc = img.src.replace('-web.jpg', '-mobile.jpg');
+                items.push({
+                    type: 'image',
+                    src: img.src,
+                    srcset: `${mobileSrc} 700w, ${img.src} 1200w`,
+                    alt: img.alt,
+                    flatIdx: idx
+                });
             });
             return items;
         },
@@ -190,9 +197,12 @@ function registerAlpine() {
                 inner.className = 'relative w-full bg-earth-pill flex items-center justify-center cursor-pointer overflow-hidden';
                 inner.style.aspectRatio = '3 / 2';
 
+                const mobileSrc = img.src.replace('-web.jpg', '-mobile.jpg');
                 const imgEl = document.createElement('img');
                 imgEl.loading = 'lazy';
                 imgEl.decoding = 'async';
+                imgEl.srcset = `${mobileSrc} 700w, ${img.src} 1200w`;
+                imgEl.sizes = '(max-width: 1023px) 100vw, 1100px';
                 imgEl.src = img.src;
                 imgEl.alt = img.alt;
                 imgEl.className = 'absolute inset-0 w-full h-full object-cover';
@@ -217,9 +227,12 @@ function registerAlpine() {
                 inner.className = 'relative w-full bg-earth-pill rounded overflow-hidden cursor-pointer';
                 inner.style.aspectRatio = '3 / 2';
 
+                const mobileSrc = img.src.replace('-web.jpg', '-mobile.jpg');
                 const imgEl = document.createElement('img');
                 imgEl.loading = 'lazy';
                 imgEl.decoding = 'async';
+                imgEl.srcset = `${mobileSrc} 700w, ${img.src} 1200w`;
+                imgEl.sizes = '(max-width: 640px) 25vw, 16vw';
                 imgEl.src = img.src;
                 imgEl.alt = img.alt;
                 imgEl.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';

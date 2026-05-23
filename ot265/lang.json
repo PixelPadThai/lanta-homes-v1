@@ -52,7 +52,12 @@
     "contact_agent": "Listed by",
     "contact_agent_name": "Bee",
     "footer_rights": "All rights reserved.",
-    "footer_listed_by": "Listed by"
+    "footer_listed_by": "Listed by",
+    "a11y_prev_image": "Previous image",
+    "a11y_next_image": "Next image",
+    "a11y_play_video": "Play or pause video",
+    "a11y_scroll_down": "Scroll to overview",
+    "a11y_close": "Close"
   },
   "th": {
     "lang_toggle": "EN",
@@ -107,6 +112,11 @@
     "contact_agent": "ลงประกาศโดย",
     "contact_agent_name": "บี",
     "footer_rights": "สงวนลิขสิทธิ์",
-    "footer_listed_by": "ลงประกาศโดย"
+    "footer_listed_by": "ลงประกาศโดย",
+    "a11y_prev_image": "ภาพก่อนหน้า",
+    "a11y_next_image": "ภาพถัดไป",
+    "a11y_play_video": "เล่นหรือหยุดวิดีโอ",
+    "a11y_scroll_down": "เลื่อนไปยังภาพรวม",
+    "a11y_close": "ปิด"
   }
 }

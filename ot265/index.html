@@ -25,9 +25,6 @@
     <link rel="preload" as="image" href="hero-web-mobile.jpg" media="(max-width: 1023px)" fetchpriority="high">
     <link rel="preload" as="image" href="hero-web.jpg" media="(min-width: 1024px)" fetchpriority="high">
 
-    <!-- Self-hosted fonts (Inter + Playfair Display) -->
-    <link rel="stylesheet" href="css/fonts.css?v=2">
-
     <!-- Favicons (relative paths — listing is served under /ot265/) -->
     <link rel="icon" type="image/png" href="favicon-96x96.png?v=20260522" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20260522" />
@@ -35,14 +32,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260522" />
     <link rel="manifest" href="site.webmanifest?v=20260522" />
 
-    <!-- Compiled Tailwind (recompile: npx tailwindcss@3 -i tailwind-input.css -o ot265/css/tailwind.css --minify) -->
-    <link rel="stylesheet" href="css/tailwind.css?v=3">
-
-    <!-- Keen Slider CSS (self-hosted) -->
-    <link rel="stylesheet" href="css/keen-slider.min.css?v=6">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/custom.css?v=6">
+    <!-- Bundled stylesheet: tailwind + keen-slider + fonts + custom (see ot265/css/site.css header for rebuild). -->
+    <link rel="stylesheet" href="css/site.css?v=2">
 </head>
 <body class="bg-earth-bg text-earth-text font-body" x-data>
 
@@ -76,7 +67,9 @@
         </div>
 
         <!-- Scroll Indicator (desktop only) -->
-        <a href="#overview" class="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator text-white/80 hover:text-white transition-colors hidden lg:flex">
+        <a href="#overview"
+           :aria-label="$store.lang.t('a11y_scroll_down')"
+           class="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator text-white/80 hover:text-white transition-colors hidden lg:flex">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
             </svg>
@@ -149,12 +142,14 @@
                         <div class="relative mb-4">
                             <div x-ref="mainSlider" class="keen-slider gallery-slider"></div>
                             <button @click="mainSlider?.prev()"
+                                    :aria-label="$store.lang.t('a11y_prev_image')"
                                     class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all hidden md:block cursor-pointer">
                                 <svg class="w-5 h-5 text-earth-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </button>
                             <button @click="mainSlider?.next()"
+                                    :aria-label="$store.lang.t('a11y_next_image')"
                                     class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all hidden md:block cursor-pointer">
                                 <svg class="w-5 h-5 text-earth-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -178,6 +173,7 @@
                         <!-- Sticky close bar -->
                         <div class="sticky top-0 z-10 flex justify-end px-4 py-3 bg-gradient-to-b from-black to-transparent pointer-events-none">
                             <button @click="closeLightbox()"
+                                    :aria-label="$store.lang.t('a11y_close')"
                                     class="pointer-events-auto text-white hover:text-earth-accent transition-colors cursor-pointer">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -185,18 +181,22 @@
                             </button>
                         </div>
 
-                        <!-- Images column -->
-                        <div class="max-w-3xl mx-auto px-4 pb-16 -mt-14">
+                        <!-- Images column: images go edge-to-edge (full viewport width),
+                             headers stay inside a centered max-w container so the small
+                             caps labels remain readable. -->
+                        <div class="pb-16 -mt-14">
                             <template x-for="(item, i) in lightboxItems" :key="i">
                                 <div>
                                     <template x-if="item.type === 'header'">
-                                        <div class="text-white/50 text-xs font-medium uppercase tracking-widest mt-10 mb-4 pb-2 border-b border-white/10"
-                                             x-text="item.title"></div>
+                                        <div class="max-w-3xl mx-auto px-4">
+                                            <div class="text-white/50 text-xs font-medium uppercase tracking-widest mt-10 mb-4 pb-2 border-b border-white/10"
+                                                 x-text="item.title"></div>
+                                        </div>
                                     </template>
                                     <template x-if="item.type === 'image'">
                                         <div class="mb-3" :data-lb-idx="item.flatIdx">
-                                            <img :src="item.src" :alt="item.alt"
-                                                 class="w-full rounded-lg"
+                                            <img :src="item.src" :srcset="item.srcset" sizes="100vw" :alt="item.alt"
+                                                 class="block w-full"
                                                  loading="lazy"
                                                  onerror="this.style.display='none'">
                                         </div>
@@ -317,6 +317,7 @@
 
                 <div class="absolute bottom-4 right-4 flex gap-2 z-10">
                     <button @click="togglePlay()"
+                            :aria-label="$store.lang.t('a11y_play_video')"
                             class="bg-white/80 hover:bg-white rounded-full p-3 shadow-lg transition-all cursor-pointer">
                         <svg x-show="!playing" class="w-5 h-5 text-earth-text" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z"/>
@@ -596,7 +597,7 @@
     <!-- Keen Slider JS (self-hosted) -->
     <script src="js/keen-slider.min.js?v=6"></script>
     <!-- App JS (registers stores/components before Alpine init) -->
-    <script src="js/app.js?v=18"></script>
+    <script src="js/app.js?v=20"></script>
     <!-- Alpine.js (self-hosted, deferred — fires alpine:init after page parses) -->
     <script defer src="js/alpine.min.js?v=3"></script>
 </body>
