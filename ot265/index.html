@@ -36,7 +36,7 @@
     <link rel="manifest" href="site.webmanifest?v=20260522" />
 
     <!-- Compiled Tailwind (recompile: npx tailwindcss@3 -i tailwind-input.css -o ot265/css/tailwind.css --minify) -->
-    <link rel="stylesheet" href="css/tailwind.css?v=1">
+    <link rel="stylesheet" href="css/tailwind.css?v=3">
 
     <!-- Keen Slider CSS (self-hosted) -->
     <link rel="stylesheet" href="css/keen-slider.min.css?v=6">
@@ -216,11 +216,25 @@
                     <div class="bg-white rounded-2xl shadow-md border border-earth-pill overflow-hidden">
 
                         <!-- Price header -->
-                        <div class="bg-earth-accent px-6 py-5 text-white text-center">
-                            <p class="text-xs font-medium uppercase tracking-wider opacity-80 mb-1"
-                               x-text="$store.lang.t('info_asking_price')"></p>
-                            <p class="font-heading text-3xl font-bold"
+                        <div class="bg-earth-accent px-6 py-6 text-white text-center">
+                            <div class="flex items-center justify-center gap-2 mb-2">
+                                <img src="images/thai.svg" alt="" class="w-5 h-5 rounded-full object-cover ring-1 ring-white/30">
+                                <p class="text-xs font-medium uppercase tracking-wider opacity-90"
+                                   x-text="$store.lang.t('info_asking_price')"></p>
+                            </div>
+                            <p class="font-heading text-4xl md:text-5xl font-bold leading-tight"
                                x-text="$store.lang.t('pill_price')"></p>
+                            <div class="mt-4 pt-3 border-t border-white/20 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm opacity-95">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <img src="images/usa.svg" alt="" class="w-4 h-4 rounded-full object-cover">
+                                    <span x-text="$store.lang.t('info_price_usd')"></span>
+                                </span>
+                                <span class="text-white/40" aria-hidden="true">·</span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <img src="images/euro.svg" alt="" class="w-4 h-4 rounded-full object-cover">
+                                    <span x-text="$store.lang.t('info_price_eur')"></span>
+                                </span>
+                            </div>
                         </div>
 
                         <!-- Specs list -->
@@ -358,25 +372,79 @@
 
             </div>
 
-            <!-- Price — full-width highlight strip -->
-            <div class="p-6 md:p-8 rounded-xl bg-earth-accent/10 border border-earth-accent/25">
-                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2.5 mb-3">
-                            <svg class="w-5 h-5 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <h3 class="font-heading text-xl font-semibold"
-                                x-text="$store.lang.t('details_price_title')"></h3>
+            <!-- Price — professional card with breakdown -->
+            <div class="rounded-xl bg-white border border-earth-pill shadow-sm overflow-hidden">
+
+                <!-- Header -->
+                <div class="px-6 md:px-8 py-5 border-b border-earth-pill flex items-center gap-2.5">
+                    <svg class="w-5 h-5 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <h3 class="font-heading text-xl font-semibold"
+                        x-text="$store.lang.t('details_price_title')"></h3>
+                </div>
+
+                <!-- Body: asking price | notes + CTA -->
+                <div class="grid md:grid-cols-2">
+
+                    <!-- Asking price block (accent) -->
+                    <div class="bg-earth-accent p-6 md:p-8 text-white text-center flex flex-col justify-center">
+                        <div class="flex items-center justify-center gap-2 mb-2">
+                            <img src="images/thai.svg" alt="" class="w-5 h-5 rounded-full object-cover ring-1 ring-white/30">
+                            <p class="text-xs font-medium uppercase tracking-wider opacity-90"
+                               x-text="$store.lang.t('info_asking_price')"></p>
                         </div>
-                        <p class="text-earth-secondary leading-relaxed text-base"
-                           x-text="$store.lang.t('details_price_text')"></p>
+                        <p class="font-heading text-3xl md:text-4xl font-bold leading-tight"
+                           x-text="$store.lang.t('pill_price')"></p>
+                        <div class="mt-4 pt-3 border-t border-white/20 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-xs opacity-95">
+                            <span class="inline-flex items-center gap-1.5">
+                                <img src="images/usa.svg" alt="" class="w-3.5 h-3.5 rounded-full object-cover">
+                                <span x-text="$store.lang.t('info_price_usd')"></span>
+                            </span>
+                            <span class="text-white/40" aria-hidden="true">·</span>
+                            <span class="inline-flex items-center gap-1.5">
+                                <img src="images/euro.svg" alt="" class="w-3.5 h-3.5 rounded-full object-cover">
+                                <span x-text="$store.lang.t('info_price_eur')"></span>
+                            </span>
+                        </div>
                     </div>
-                    <a href="#contact"
-                       class="flex-shrink-0 self-start bg-earth-accent text-white px-6 py-3 rounded-xl font-medium hover:bg-earth-secondary transition-colors whitespace-nowrap">
-                        <span x-text="$store.lang.t('overview_cta')"></span>
-                    </a>
+
+                    <!-- Notes + CTA -->
+                    <div class="p-6 md:p-8 flex flex-col gap-5">
+                        <!-- Mortgage note -->
+                        <div class="flex gap-3">
+                            <svg class="w-5 h-5 text-earth-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <div class="flex-1">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-earth-text mb-1"
+                                   x-text="$store.lang.t('details_price_mortgage_label')"></p>
+                                <p class="text-earth-secondary leading-relaxed text-sm"
+                                   x-text="$store.lang.t('details_price_mortgage_text')"></p>
+                            </div>
+                        </div>
+                        <!-- Land office fees note -->
+                        <div class="flex gap-3">
+                            <svg class="w-5 h-5 text-earth-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <div class="flex-1">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-earth-text mb-1"
+                                   x-text="$store.lang.t('details_price_fees_label')"></p>
+                                <p class="text-earth-secondary leading-relaxed text-sm"
+                                   x-text="$store.lang.t('details_price_fees_text')"></p>
+                            </div>
+                        </div>
+                        <!-- CTA -->
+                        <a href="#contact"
+                           class="mt-1 inline-block text-center bg-earth-accent text-white px-6 py-3 rounded-xl font-medium hover:bg-earth-secondary transition-colors">
+                            <span x-text="$store.lang.t('overview_cta')"></span>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
