@@ -252,7 +252,7 @@ function registerAlpine() {
                 imgEl.onerror = function() { this.style.display = 'none'; };
 
                 inner.appendChild(imgEl);
-                inner.addEventListener('click', () => this.openLightbox(idx));
+                inner.addEventListener('click', () => this.openLightbox());
                 slide.appendChild(inner);
                 mainEl.appendChild(slide);
             });
@@ -312,13 +312,15 @@ function registerAlpine() {
             if (this.mainSlider) this.mainSlider.moveToIdx(idx);
         },
 
-        openLightbox(idx) {
-            this.lightboxIndex = idx;
-            this.scrollLightboxTo(`g-${idx}`);
+        // Two entry points — both ignore which specific thumbnail was
+        // clicked. Gallery clicks land at the top of the property photos;
+        // Old Town clicks land at the first Old Town photo.
+        openLightbox() {
+            this.scrollLightboxTo('g-0');
         },
 
-        openOldtownLightbox(idx) {
-            this.scrollLightboxTo(`ot-${idx}`);
+        openOldtownLightbox() {
+            this.scrollLightboxTo('ot-0');
         },
 
         scrollLightboxTo(lbId) {
@@ -348,8 +350,8 @@ function registerAlpine() {
             this.$nextTick(() => this.buildSliders());
             // Cross-component: Old Town slider lives in its own Alpine root,
             // so it asks us to open the lightbox via a window event.
-            window.addEventListener('open-oldtown-lightbox', (e) => {
-                this.openOldtownLightbox(e.detail.idx);
+            window.addEventListener('open-oldtown-lightbox', () => {
+                this.openOldtownLightbox();
             });
         },
 
@@ -444,7 +446,7 @@ function registerAlpine() {
             if (!el) return;
 
             el.innerHTML = '';
-            OLDTOWN_IMAGES.forEach((file, idx) => {
+            OLDTOWN_IMAGES.forEach((file) => {
                 const slide = document.createElement('div');
                 slide.className = 'keen-slider__slide oldtown-slide';
                 slide.style.cursor = 'pointer';
@@ -462,9 +464,7 @@ function registerAlpine() {
 
                 slide.appendChild(imgEl);
                 slide.addEventListener('click', () => {
-                    window.dispatchEvent(new CustomEvent('open-oldtown-lightbox', {
-                        detail: { idx }
-                    }));
+                    window.dispatchEvent(new CustomEvent('open-oldtown-lightbox'));
                 });
                 el.appendChild(slide);
             });
