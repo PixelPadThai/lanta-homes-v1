@@ -33,7 +33,7 @@
     <link rel="manifest" href="site.webmanifest?v=20260522" />
 
     <!-- Bundled stylesheet: tailwind + keen-slider + fonts + custom (see ot265/css/site.css header for rebuild). -->
-    <link rel="stylesheet" href="css/site.css?v=8">
+    <link rel="stylesheet" href="css/site.css?v=11">
 </head>
 <body class="bg-earth-bg text-earth-text font-body" x-data>
 
@@ -213,7 +213,7 @@
                             <button @click="closeLightbox()"
                                     :aria-label="$store.lang.t('a11y_close')"
                                     class="text-white transition-colors cursor-pointer pointer-events-auto hover:text-earth-accent">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-8 h-8 lg:w-16 lg:h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                             </button>
@@ -232,8 +232,11 @@
                                         </div>
                                     </template>
                                     <template x-if="item.type === 'image'">
-                                        <div class="mb-3" :data-lb-idx="item.flatIdx">
-                                            <img :src="item.src" :srcset="item.srcset" sizes="100vw" :alt="item.alt"
+                                        <div class="mb-3" :data-lb-idx="item.lbId">
+                                            <img :src="item.src"
+                                                 :srcset="item.srcset || null"
+                                                 :sizes="item.srcset ? '100vw' : null"
+                                                 :alt="item.alt"
                                                  class="block w-full"
                                                  loading="lazy"
                                                  onerror="this.style.display='none'">
@@ -644,6 +647,22 @@
     </section>
     </div><!-- /contact reveal wrapper -->
 
+    <!-- Discover Old Town — full-bleed auto-width slider -->
+    <section class="py-16 bg-earth-bg md:py-24"
+             x-data="scrollReveal"
+             :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
+        <div class="max-w-5xl px-3 mx-auto">
+            <h2 class="mb-3 text-3xl text-center font-heading md:text-4xl"
+                x-text="$store.lang.t('oldtown_title')"></h2>
+            <p class="mb-8 text-center text-earth-secondary"
+               x-text="$store.lang.t('oldtown_subtitle')"></p>
+        </div>
+
+        <div class="oldtown-slider-wrap" x-data="oldtownSlider">
+            <div x-ref="slider" class="keen-slider oldtown-slider"></div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="py-8 border-t border-earth-pill"
             x-data="scrollReveal"
@@ -669,7 +688,7 @@
     <!-- Keen Slider JS (self-hosted) -->
     <script src="js/keen-slider.min.js?v=6"></script>
     <!-- App JS (registers stores/components before Alpine init) -->
-    <script src="js/app.js?v=21"></script>
+    <script src="js/app.js?v=26"></script>
     <!-- Alpine.js (self-hosted, deferred — fires alpine:init after page parses) -->
     <script defer src="js/alpine.min.js?v=3"></script>
 </body>

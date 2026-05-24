@@ -1,6 +1,27 @@
 // All display text lives in lang.json (single source of truth, EN + TH).
 // It is fetched at runtime by the lang store's init() below.
 
+// Shared between the Old Town slider (renders the row) and the gallery
+// component's lightbox (appends them to its scrollable column so one click
+// scrolls to the matching image).
+const OLDTOWN_IMAGES = [
+    'aerial-old-town-overlooking-oldtown-strip-and-pier-web.jpg',
+    'aerial-old-town-sunday-market-web.jpg',
+    'aerial-old-town-laanta-festival-scene-and-strip-web.jpg',
+    'aerial-old-town-laanta-festival-lighthouse-stage-scene-web.jpg',
+    'aerial-old-town-laanta-festival-pier-building-scene-web.jpg',
+    'aerial-old-town-laanta-festival-panorama-afterdark-web.jpg',
+    'aerial-old-town-laanta-festival-carnival-roundabout-web.jpg',
+    'aerial-old-townlaanta-festival-scene-lighthouse-web.jpg',
+    'ip11-old-town-sunset-behind-mountain-from-pier-towards-oldtown-web.jpg',
+    'ip11-old-town-restaurant-1-waterfront-sunset-web.jpg',
+    'ip11-old-town-restaurant-1-waterfront-night-web.jpg',
+    'ip11-old-town-restaurant-2-waterfront-sunset-web.jpg',
+    'ip11-old-town-restaurant-2-waterfront-night-web.jpg',
+    'ip11-old-town-restaurant-chinese-shrine-sunset-web.jpg',
+    'ip11-old-town-grandmas-house-web.jpg',
+];
+
 function registerAlpine() {
 
     // ── Language Store ──────────────────────────────────────────
@@ -147,7 +168,10 @@ function registerAlpine() {
             return this.flatImages;
         },
 
-        // Flat list of headers + images for the scrollable lightbox column
+        // Flat list of headers + images for the scrollable lightbox column.
+        // Property photos first (grouped by room), then a "Discover Old Town"
+        // section with the surrounding-area images. Each image carries a
+        // string lbId ("g-N" / "ot-N") so click handlers can scroll to it.
         get lightboxItems() {
             const items = [];
             let lastGroup = null;
@@ -162,9 +186,23 @@ function registerAlpine() {
                     src: img.src,
                     srcset: `${mobileSrc} 700w, ${img.src} 1200w`,
                     alt: img.alt,
-                    flatIdx: idx
+                    lbId: `g-${idx}`
                 });
             });
+
+            items.push({ type: 'header', title: 'Discover Old Town' });
+            OLDTOWN_IMAGES.forEach((file, idx) => {
+                const src = 'oldtown-images/' + file;
+                const mobileSrc = src.replace('-web.jpg', '-mobile.jpg');
+                items.push({
+                    type: 'image',
+                    src,
+                    srcset: `${mobileSrc} 700w, ${src} 1200w`,
+                    alt: '',
+                    lbId: `ot-${idx}`
+                });
+            });
+
             return items;
         },
 
@@ -276,11 +314,19 @@ function registerAlpine() {
 
         openLightbox(idx) {
             this.lightboxIndex = idx;
+            this.scrollLightboxTo(`g-${idx}`);
+        },
+
+        openOldtownLightbox(idx) {
+            this.scrollLightboxTo(`ot-${idx}`);
+        },
+
+        scrollLightboxTo(lbId) {
             this.lightboxOpen = true;
             document.body.style.overflow = 'hidden';
             this.$nextTick(() => {
                 // Lightbox is teleported to <body>, so $refs can't reach it - query the document.
-                const target = document.querySelector(`[data-lb-idx="${idx}"]`);
+                const target = document.querySelector(`[data-lb-idx="${lbId}"]`);
                 if (target) target.scrollIntoView({ block: 'start' });
             });
         },
@@ -300,6 +346,11 @@ function registerAlpine() {
 
         init() {
             this.$nextTick(() => this.buildSliders());
+            // Cross-component: Old Town slider lives in its own Alpine root,
+            // so it asks us to open the lightbox via a window event.
+            window.addEventListener('open-oldtown-lightbox', (e) => {
+                this.openOldtownLightbox(e.detail.idx);
+            });
         },
 
         destroy() {
@@ -373,6 +424,87 @@ function registerAlpine() {
             if (!video) return;
             video.muted = !video.muted;
             this.muted = video.muted;
+        }
+    }));
+
+    // ── Old Town Slider ─────────────────────────────────────────
+    // Full-bleed auto-width slider for surrounding-area photos.
+    // Slide heights are fixed per breakpoint in custom.css; images get
+    // height:100% / width:auto so they keep their natural aspect ratio —
+    // wider photos take more horizontal space, narrower ones less.
+    Alpine.data('oldtownSlider', () => ({
+        slider: null,
+
+        init() {
+            this.$nextTick(() => this.build());
+        },
+
+        build() {
+            const el = this.$refs.slider;
+            if (!el) return;
+
+            el.innerHTML = '';
+            OLDTOWN_IMAGES.forEach((file, idx) => {
+                const slide = document.createElement('div');
+                slide.className = 'keen-slider__slide oldtown-slide';
+                slide.style.cursor = 'pointer';
+
+                const src = 'oldtown-images/' + file;
+                const mobileSrc = src.replace('-web.jpg', '-mobile.jpg');
+                const imgEl = document.createElement('img');
+                imgEl.loading = 'lazy';
+                imgEl.decoding = 'async';
+                imgEl.srcset = `${mobileSrc} 700w, ${src} 1200w`;
+                imgEl.sizes = '(max-width: 1023px) 100vw, (max-width: 1279px) 33vw, 20vw';
+                imgEl.src = src;
+                imgEl.alt = '';
+                imgEl.onerror = function () { this.style.display = 'none'; };
+
+                slide.appendChild(imgEl);
+                slide.addEventListener('click', () => {
+                    window.dispatchEvent(new CustomEvent('open-oldtown-lightbox', {
+                        detail: { idx }
+                    }));
+                });
+                el.appendChild(slide);
+            });
+
+            // Autoplay plugin: nudge to next slide on an interval, pause on hover/drag.
+            const autoplay = (slider, ms = 3000) => {
+                let timeout, mouseOver = false;
+                const clearNextTimeout = () => clearTimeout(timeout);
+                const nextTimeout = () => {
+                    clearTimeout(timeout);
+                    if (mouseOver) return;
+                    timeout = setTimeout(() => slider.next(), ms);
+                };
+                slider.on('created', () => {
+                    slider.container.addEventListener('mouseover', () => { mouseOver = true;  clearNextTimeout(); });
+                    slider.container.addEventListener('mouseout',  () => { mouseOver = false; nextTimeout(); });
+                    nextTimeout();
+                });
+                slider.on('dragStarted',    clearNextTimeout);
+                slider.on('animationEnded', nextTimeout);
+                slider.on('updated',        nextTimeout);
+            };
+
+            this.slider = new KeenSlider(el, {
+                loop: true,
+                mode: 'free-snap',
+                slides: { perView: 1, spacing: 8 },
+                breakpoints: {
+                    '(min-width: 1024px)': {
+                        slides: { perView: 3, spacing: 10 },
+                    },
+                    '(min-width: 1280px)': {
+                        slides: { perView: 5, spacing: 10 },
+                    },
+                },
+            }, [autoplay]);
+        },
+
+        destroy() {
+            if (this.slider) this.slider.destroy();
         }
     }));
 

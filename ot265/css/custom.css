@@ -296,6 +296,30 @@ html:not(.lang-ready) [x-text] {
     color: #C4956A;
 }
 
+/* ── Old Town Slider ───────────────────────────────────────── */
+/* Full-bleed: ignore the page's mobile px-3 gutter and stretch
+   edge-to-edge of the viewport (matches gallery-breakout-x idea). */
+.oldtown-slider-wrap {
+    width: 100%;
+    overflow: hidden;
+}
+
+/* perView breakpoints (1 / 3 / 5). Keen-slider sets equal widths;
+   each slide gets a fixed 16:9 aspect ratio so the row height
+   scales with viewport width. Images fill via object-fit:cover. */
+.oldtown-slider .oldtown-slide {
+    aspect-ratio: 16 / 9;
+    background-color: #E8DDD3;
+    overflow: hidden;
+}
+
+.oldtown-slider .oldtown-slide img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
 /* ── Video Section ─────────────────────────────────────────── */
 .video-container video {
     object-fit: cover;
