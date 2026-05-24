@@ -33,7 +33,7 @@
     <link rel="manifest" href="site.webmanifest?v=20260522" />
 
     <!-- Bundled stylesheet: tailwind + keen-slider + fonts + custom (see ot265/css/site.css header for rebuild). -->
-    <link rel="stylesheet" href="css/site.css?v=12">
+    <link rel="stylesheet" href="css/site.css?v=13">
 </head>
 <body class="bg-earth-bg text-earth-text font-body" x-data>
 
@@ -219,10 +219,10 @@
                             </button>
                         </div>
 
-                        <!-- Images column: images go edge-to-edge (full viewport width),
-                             headers stay inside a centered max-w container so the small
-                             caps labels remain readable. -->
-                        <div class="pb-16 -mt-14">
+                        <!-- Images column: images go edge-to-edge up to a 1900px cap,
+                             then centered. Headers stay inside their own narrower
+                             max-w container so the small caps labels remain readable. -->
+                        <div class="pb-16 -mt-14 max-w-[1900px] mx-auto">
                             <template x-for="(item, i) in lightboxItems" :key="i">
                                 <div>
                                     <template x-if="item.type === 'header'">
