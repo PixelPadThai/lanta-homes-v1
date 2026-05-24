@@ -33,7 +33,7 @@
     <link rel="manifest" href="site.webmanifest?v=20260522" />
 
     <!-- Bundled stylesheet: tailwind + keen-slider + fonts + custom (see ot265/css/site.css header for rebuild). -->
-    <link rel="stylesheet" href="css/site.css?v=5">
+    <link rel="stylesheet" href="css/site.css?v=8">
 </head>
 <body class="bg-earth-bg text-earth-text font-body" x-data>
 
@@ -80,21 +80,44 @@
 
     <!-- Mobile info bar (sticky below hero, hidden on lg+) -->
     <div class="sticky top-0 z-40 bg-white border-b shadow-sm lg:hidden border-earth-pill">
-        <div class="max-w-6xl px-4 py-2 mx-auto">
+        <div class="max-w-6xl px-3 py-2 mx-auto">
             <p class="text-lg font-semibold leading-tight font-heading text-earth-text"
                x-text="$store.lang.t('hero_mobile_title')"></p>
             <div class="flex items-center justify-between gap-3">
                 <span class="text-sm text-earth-secondary"
                       x-text="$store.lang.t('hero_mobile_location')"></span>
                 <span class="px-3 py-1 text-xs font-semibold text-white rounded-full bg-earth-accent whitespace-nowrap pill"
-                      x-text="$store.lang.t('pill_price')"></span>
+                      x-data="{
+                          idx: 0,
+                          fading: false,
+                          items: [
+                              { flag: 'thai.svg', key: 'pill_price' },
+                              { flag: 'usa.svg',  key: 'info_price_usd' },
+                              { flag: 'euro.svg', key: 'info_price_eur' }
+                          ],
+                          init() {
+                              setInterval(() => {
+                                  this.fading = true;
+                                  setTimeout(() => {
+                                      this.idx = (this.idx + 1) % this.items.length;
+                                      this.fading = false;
+                                  }, 250);
+                              }, 3000);
+                          }
+                      }">
+                    <span class="inline-flex items-center gap-1.5 pill-cycle"
+                          :class="{ 'pill-cycle--fading': fading }">
+                        <img :src="`images/${items[idx].flag}`" alt="" class="w-3.5 h-3.5 rounded-full object-cover">
+                        <span x-text="$store.lang.t(items[idx].key)"></span>
+                    </span>
+                </span>
             </div>
         </div>
     </div>
 
     <!-- Overview + Gallery (combined; DOM order controls mobile stacking) -->
     <section class="pt-16 pb-16 md:pt-24 md:pb-24">
-        <div class="max-w-6xl px-4 mx-auto">
+        <div class="max-w-6xl px-3 mx-auto">
             <div class="lg:grid lg:grid-cols-3 lg:items-start">
 
                 <!-- TEXT — DOM order 1; desktop: col 1-2, row 1 -->
@@ -102,11 +125,26 @@
                      x-data="scrollReveal" :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
                     <h2 class="mb-8 text-3xl font-heading md:text-4xl"
                         x-text="$store.lang.t('overview_title')"></h2>
-                    <div class="space-y-4 text-lg leading-relaxed text-earth-secondary">
-                        <p x-text="$store.lang.t('overview_p1')"></p>
-                        <p x-text="$store.lang.t('overview_p2')"></p>
-                        <p x-text="$store.lang.t('overview_year_round')"></p>
-                        <p x-text="$store.lang.t('overview_p3')"></p>
+                    <div x-data="{ expanded: false }">
+                        <div class="overview-collapsible space-y-4 text-lg leading-relaxed text-earth-secondary"
+                             :class="{ 'is-expanded': expanded }">
+                            <p x-text="$store.lang.t('overview_p1')"></p>
+                            <p x-text="$store.lang.t('overview_p2')"></p>
+                            <p x-text="$store.lang.t('overview_year_round')"></p>
+                            <p x-text="$store.lang.t('overview_p3')"></p>
+                        </div>
+                        <button @click="expanded = !expanded"
+                                :aria-expanded="expanded"
+                                class="overview-toggle lg:hidden">
+                            <svg x-show="!expanded" class="overview-toggle__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <svg x-show="expanded" class="overview-toggle__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <span x-text="expanded ? $store.lang.t('overview_read_less') : $store.lang.t('overview_read_more')"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -114,7 +152,7 @@
                 <!-- scrollReveal must stay OUTSIDE the gallery component: x-ref="mainSlider"/"thumbSlider"
                      have to sit under the gallery root with no intervening x-data, or $refs won't resolve
                      in buildSliders() and the slider builds nothing. -->
-                <div class="mt-10 -mx-4 lg:col-span-3 lg:row-start-2 lg:mx-0 lg:mt-16"
+                <div class="mt-10 gallery-breakout-x lg:col-span-3 lg:row-start-2 lg:mt-16"
                      x-data="scrollReveal"
                      :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
                   <div x-data="gallery">
@@ -323,14 +361,14 @@
     <section class="py-16 md:py-24"
              x-data="scrollReveal"
              :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-        <div class="max-w-6xl px-4 mx-auto">
+        <div class="max-w-6xl px-3 mx-auto">
             <h2 class="mb-3 text-3xl text-center font-heading md:text-4xl"
                 x-text="$store.lang.t('video_title')"></h2>
             <p class="mb-8 text-center text-earth-secondary"
                x-text="$store.lang.t('video_subtitle')"></p>
         </div>
 
-        <div class="relative max-w-6xl px-4 mx-auto" x-data="droneVideo">
+        <div class="relative max-w-6xl px-3 mx-auto" x-data="droneVideo">
             <div class="relative overflow-hidden shadow-lg video-container rounded-xl">
                 <div class="flex items-center justify-center w-full video-placeholder">
                     <video x-ref="video"
@@ -361,8 +399,8 @@
     <!-- Property Details -->
     <section class="py-16 bg-white md:py-24"
              x-data="scrollReveal" :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-        <div class="max-w-5xl px-4 mx-auto">
-            <h2 class="mb-12 text-3xl text-center font-heading md:text-4xl"
+        <div class="max-w-5xl px-3 mx-auto">
+            <h2 class="mb-8 text-3xl text-center font-heading md:text-4xl"
                 x-text="$store.lang.t('details_title')"></h2>
 
             <!-- 2 equal info cards -->
@@ -483,7 +521,7 @@
     <section class="py-16 md:py-24"
              x-data="scrollReveal"
              :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-        <div class="max-w-5xl px-4 mx-auto">
+        <div class="max-w-5xl px-3 mx-auto">
             <h2 class="mb-8 text-3xl text-center font-heading md:text-4xl"
                 x-text="$store.lang.t('map_title')"></h2>
 
@@ -506,10 +544,10 @@
     <!-- Contact Section -->
     <div x-data="scrollReveal" :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
     <section id="contact" class="py-16 bg-white md:py-24" x-data="contactForm">
-        <div class="max-w-5xl px-4 mx-auto">
+        <div class="max-w-5xl px-3 mx-auto">
             <h2 class="mb-3 text-3xl text-center font-heading md:text-4xl"
                 x-text="$store.lang.t('contact_title')"></h2>
-            <p class="mb-12 text-center text-earth-secondary"
+            <p class="mb-8 text-center text-earth-secondary"
                x-text="$store.lang.t('contact_subtitle')"></p>
 
             <div class="grid gap-12 md:grid-cols-2">
@@ -610,7 +648,7 @@
     <footer class="py-8 border-t border-earth-pill"
             x-data="scrollReveal"
             :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-        <div class="max-w-5xl px-4 mx-auto text-sm text-center text-earth-secondary">
+        <div class="max-w-5xl px-3 mx-auto text-sm text-center text-earth-secondary">
             <img src="images/lanta-homes-logo.png" alt="Lanta.Homes" width="200" height="36" loading="lazy" decoding="async" class="w-auto mx-auto mb-3 h-9">
             <p class="flex items-center justify-center gap-2">
                 <img src="images/bee-profile.jpg" alt="Bee" width="36" height="36" loading="lazy" decoding="async" class="object-cover w-10 h-10 rounded-full">

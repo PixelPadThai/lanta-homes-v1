@@ -134,6 +134,15 @@ html:not(.lang-ready) [x-text] {
                 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* Currency cycler: only the inner content fades (the pill bg/border
+   stays solid) so it never looks like the pill is blinking off. */
+.pill-cycle {
+    transition: opacity 0.25s ease;
+}
+.pill-cycle--fading {
+    opacity: 0;
+}
+
 /* ── Pills Scroll (hide scrollbar) ─────────────────────────── */
 .pills-scroll {
     scrollbar-width: none;
@@ -188,6 +197,80 @@ html:not(.lang-ready) [x-text] {
 
 .reveal-visible {
     animation: fade-in-up 0.7s ease-out var(--reveal-delay, 0ms) forwards;
+}
+
+/* Gallery card breaks out of the section's mobile px-3 padding to
+   sit edge-to-edge. Mirrors the old `-mx-4 lg:mx-0` pair, but at the
+   tighter 0.75rem mobile gutter (Tailwind doesn't ship -mx-3 in our
+   JIT build, so this lives here). */
+.gallery-breakout-x {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+}
+@media (min-width: 1024px) {
+    .gallery-breakout-x {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+/* ── Overview Collapsible (mobile only) ────────────────────── */
+/* Desktop shows full text; on <1024px clamp height and fade the
+   bottom into the page bg (#FAF6F1 = earth-bg) until expanded. */
+.overview-toggle { display: none; }
+
+@media (max-width: 1023px) {
+    .overview-collapsible {
+        position: relative;
+        max-height: 17rem;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+    }
+    .overview-collapsible::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 5rem;
+        pointer-events: none;
+        background: linear-gradient(
+            to bottom,
+            rgba(250, 246, 241, 0) 0%,
+            #FAF6F1 100%
+        );
+        transition: opacity 0.3s ease;
+    }
+    .overview-collapsible.is-expanded {
+        max-height: 200rem;
+    }
+    .overview-collapsible.is-expanded::after {
+        opacity: 0;
+    }
+
+    .overview-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-top: 1rem;
+        padding: 0.55rem 1.1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #8B6843;
+        background-color: #ffffff;
+        border: 1px solid #E8DDD3;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .overview-toggle:hover {
+        background-color: #E8DDD3;
+        border-color: #C4956A;
+    }
+    .overview-toggle__icon {
+        width: 1rem;
+        height: 1rem;
+    }
 }
 
 /* ── Agent Contact Card ────────────────────────────────────── */
