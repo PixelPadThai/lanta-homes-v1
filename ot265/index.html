@@ -38,29 +38,29 @@
 <body class="bg-earth-bg text-earth-text font-body" x-data>
 
     <!-- Language Toggle (visible only while hero is in viewport) -->
-    <div class="fixed top-4 right-4 z-50"
+    <div class="fixed z-50 top-4 right-4"
          x-data="langToggle"
          x-show="visible"
          x-transition.opacity>
         <button
             @click="$store.lang.toggle()"
-            class="w-8 h-8 rounded-full shadow-lg ring-2 ring-white/80 overflow-hidden hover:scale-105 transition-transform cursor-pointer flex items-center justify-center"
+            class="flex items-center justify-center w-8 h-8 overflow-hidden transition-transform rounded-full shadow-lg cursor-pointer ring-2 ring-white/80 hover:scale-105"
             :aria-label="$store.lang.current === 'en' ? 'Switch to Thai' : 'Switch to English'"
         >
-            <img x-show="$store.lang.current === 'en'" src="images/thai.svg" alt="" class="w-full h-full object-cover">
-            <img x-show="$store.lang.current === 'th'" src="images/english.svg" alt="" class="w-full h-full object-cover">
+            <img x-show="$store.lang.current === 'en'" src="images/thai.svg" alt="" class="object-cover w-full h-full">
+            <img x-show="$store.lang.current === 'th'" src="images/english.svg" alt="" class="object-cover w-full h-full">
         </button>
     </div>
 
     <!-- Hero Section -->
     <section data-hero class="lg:relative w-full aspect-[4/3] lg:aspect-auto lg:h-screen flex items-center justify-center" style="background-size:cover;background-position:center;background-color:#8B7355;">
-        <div class="hero-overlay absolute inset-0"></div>
+        <div class="absolute inset-0 hero-overlay"></div>
 
         <!-- Desktop text overlay (hidden on mobile) -->
-        <div class="relative z-10 text-center text-white px-4 hidden lg:block">
-            <h1 class="font-heading text-5xl md:text-7xl font-bold mb-4 drop-shadow-lg"
+        <div class="relative z-10 hidden px-4 text-center text-white lg:block">
+            <h1 class="mb-4 text-5xl font-bold font-heading md:text-7xl drop-shadow-lg"
                 x-text="$store.lang.t('hero_title')"></h1>
-            <p class="text-lg md:text-2xl font-light tracking-wide drop-shadow-md mb-6"
+            <p class="mb-6 text-lg font-light tracking-wide md:text-2xl drop-shadow-md"
                x-text="$store.lang.t('hero_tagline')"></p>
             <span class="inline-block bg-earth-accent text-white px-5 py-2.5 rounded-full font-semibold text-lg drop-shadow"
                   x-text="$store.lang.t('pill_price')"></span>
@@ -69,7 +69,7 @@
         <!-- Scroll Indicator (desktop only) -->
         <a href="#overview"
            :aria-label="$store.lang.t('a11y_scroll_down')"
-           class="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator text-white/80 hover:text-white transition-colors hidden lg:flex">
+           class="absolute hidden transition-colors -translate-x-1/2 bottom-8 left-1/2 scroll-indicator text-white/80 hover:text-white lg:flex">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
             </svg>
@@ -80,30 +80,30 @@
     <div class="content-over-hero">
 
     <!-- Mobile info bar (sticky below hero, hidden on lg+) -->
-    <div class="lg:hidden sticky top-0 z-40 bg-white border-b border-earth-pill shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-2">
-            <p class="font-heading text-lg font-semibold text-earth-text leading-tight"
+    <div class="sticky top-0 z-40 bg-white border-b shadow-sm lg:hidden border-earth-pill">
+        <div class="max-w-6xl px-4 py-2 mx-auto">
+            <p class="text-lg font-semibold leading-tight font-heading text-earth-text"
                x-text="$store.lang.t('hero_mobile_title')"></p>
             <div class="flex items-center justify-between gap-3">
                 <span class="text-sm text-earth-secondary"
                       x-text="$store.lang.t('hero_mobile_location')"></span>
-                <span class="bg-earth-accent text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap"
+                <span class="px-3 py-1 text-xs font-semibold text-white rounded-full bg-earth-accent whitespace-nowrap"
                       x-text="$store.lang.t('pill_price')"></span>
             </div>
         </div>
     </div>
 
     <!-- Overview + Gallery (combined; DOM order controls mobile stacking) -->
-    <section class="pt-16 md:pt-24 pb-16 md:pb-24">
-        <div class="max-w-6xl mx-auto px-4">
+    <section class="pt-16 pb-16 md:pt-24 md:pb-24">
+        <div class="max-w-6xl px-4 mx-auto">
             <div class="lg:grid lg:grid-cols-3 lg:items-start">
 
                 <!-- TEXT — DOM order 1; desktop: col 1-2, row 1 -->
-                <div id="overview" class="lg:col-span-2 lg:row-start-1 lg:pr-16 pb-10 lg:pb-0"
+                <div id="overview" class="pb-10 lg:col-span-2 lg:row-start-1 lg:pr-16 lg:pb-0"
                      x-data="scrollReveal" :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-                    <h2 class="font-heading text-3xl md:text-4xl mb-8"
+                    <h2 class="mb-8 text-3xl font-heading md:text-4xl"
                         x-text="$store.lang.t('overview_title')"></h2>
-                    <div class="space-y-4 text-earth-secondary leading-relaxed text-lg">
+                    <div class="space-y-4 text-lg leading-relaxed text-earth-secondary">
                         <p x-text="$store.lang.t('overview_p1')"></p>
                         <p x-text="$store.lang.t('overview_p2')"></p>
                         <p x-text="$store.lang.t('overview_p3')"></p>
@@ -114,27 +114,27 @@
                 <!-- scrollReveal must stay OUTSIDE the gallery component: x-ref="mainSlider"/"thumbSlider"
                      have to sit under the gallery root with no intervening x-data, or $refs won't resolve
                      in buildSliders() and the slider builds nothing. -->
-                <div class="lg:col-span-3 lg:row-start-2 -mx-4 lg:mx-0 mt-10 lg:mt-16"
+                <div class="mt-10 -mx-4 lg:col-span-3 lg:row-start-2 lg:mx-0 lg:mt-16"
                      x-data="scrollReveal"
                      :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
                   <div x-data="gallery">
-                    <div class="bg-white py-12 lg:py-16 px-4 lg:px-6 lg:rounded-2xl">
-                        <h2 class="font-heading text-3xl md:text-4xl text-center mb-8"
+                    <div class="px-4 py-12 bg-white lg:py-16 lg:px-6 lg:rounded-2xl">
+                        <h2 class="mb-8 text-3xl text-center font-heading md:text-4xl"
                             x-text="$store.lang.t('gallery_title')"></h2>
 
                         <!-- Category Tabs -->
                         <div class="flex justify-center gap-2 mb-8">
                             <button @click="setCategory('exterior')"
                                     :class="activeCategory === 'exterior' ? 'bg-earth-accent text-white' : 'bg-earth-pill text-earth-pill-text hover:bg-earth-accent/20'"
-                                    class="px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer"
+                                    class="px-5 py-2 text-sm font-medium transition-colors rounded-full cursor-pointer"
                                     x-text="$store.lang.t('gallery_exterior')"></button>
                             <button @click="setCategory('interior')"
                                     :class="activeCategory === 'interior' ? 'bg-earth-accent text-white' : 'bg-earth-pill text-earth-pill-text hover:bg-earth-accent/20'"
-                                    class="px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer"
+                                    class="px-5 py-2 text-sm font-medium transition-colors rounded-full cursor-pointer"
                                     x-text="$store.lang.t('gallery_interior')"></button>
                             <button @click="setCategory('surroundings')"
                                     :class="activeCategory === 'surroundings' ? 'bg-earth-accent text-white' : 'bg-earth-pill text-earth-pill-text hover:bg-earth-accent/20'"
-                                    class="px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer"
+                                    class="px-5 py-2 text-sm font-medium transition-colors rounded-full cursor-pointer"
                                     x-text="$store.lang.t('gallery_surroundings')"></button>
                         </div>
 
@@ -143,14 +143,14 @@
                             <div x-ref="mainSlider" class="keen-slider gallery-slider"></div>
                             <button @click="mainSlider?.prev()"
                                     :aria-label="$store.lang.t('a11y_prev_image')"
-                                    class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all hidden md:block cursor-pointer">
+                                    class="absolute hidden p-2 transition-all -translate-y-1/2 rounded-full shadow-lg cursor-pointer left-3 top-1/2 bg-white/80 hover:bg-white md:block">
                                 <svg class="w-5 h-5 text-earth-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </button>
                             <button @click="mainSlider?.next()"
                                     :aria-label="$store.lang.t('a11y_next_image')"
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all hidden md:block cursor-pointer">
+                                    class="absolute hidden p-2 transition-all -translate-y-1/2 rounded-full shadow-lg cursor-pointer right-3 top-1/2 bg-white/80 hover:bg-white md:block">
                                 <svg class="w-5 h-5 text-earth-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                 </svg>
@@ -167,14 +167,14 @@
                          not none) would otherwise become its containing block and trap it in the grid. -->
                     <template x-teleport="body">
                     <div x-show="lightboxOpen" x-transition.opacity
-                         class="fixed inset-0 z-50 bg-black/95 overflow-y-auto"
+                         class="fixed inset-0 z-50 overflow-y-auto bg-black/95"
                          @keydown.escape.window="if (lightboxOpen) closeLightbox()">
 
                         <!-- Sticky close bar -->
-                        <div class="sticky top-0 z-10 flex justify-end px-4 py-3 bg-gradient-to-b from-black to-transparent pointer-events-none">
+                        <div class="sticky top-0 z-10 flex justify-end px-4 py-3 pointer-events-none bg-gradient-to-b from-black to-transparent">
                             <button @click="closeLightbox()"
                                     :aria-label="$store.lang.t('a11y_close')"
-                                    class="pointer-events-auto text-white hover:text-earth-accent transition-colors cursor-pointer">
+                                    class="text-white transition-colors cursor-pointer pointer-events-auto hover:text-earth-accent">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
@@ -188,8 +188,8 @@
                             <template x-for="(item, i) in lightboxItems" :key="i">
                                 <div>
                                     <template x-if="item.type === 'header'">
-                                        <div class="max-w-3xl mx-auto px-4">
-                                            <div class="text-white/50 text-xs font-medium uppercase tracking-widest mt-10 mb-4 pb-2 border-b border-white/10"
+                                        <div class="max-w-3xl px-4 mx-auto">
+                                            <div class="pb-2 mt-10 mb-4 text-xs font-medium tracking-widest uppercase border-b text-white/50 border-white/10"
                                                  x-text="item.title"></div>
                                         </div>
                                     </template>
@@ -210,28 +210,28 @@
                 </div>
 
                 <!-- INFO CARD — DOM order 3; desktop: col 3, row 1 (sticky alongside text) -->
-                <div class="lg:col-start-3 lg:row-start-1 mt-10 lg:mt-0"
+                <div class="mt-10 lg:col-start-3 lg:row-start-1 lg:mt-0"
                      x-data="scrollReveal(150)"
                      :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-                    <div class="bg-white rounded-2xl shadow-md border border-earth-pill overflow-hidden">
+                    <div class="overflow-hidden bg-white border shadow-md rounded-2xl border-earth-pill">
 
                         <!-- Price header -->
-                        <div class="bg-earth-accent px-6 py-6 text-white text-center">
+                        <div class="px-6 py-6 text-center text-white bg-earth-accent">
                             <div class="flex items-center justify-center gap-2 mb-2">
-                                <img src="images/thai.svg" alt="" class="w-5 h-5 rounded-full object-cover ring-1 ring-white/30">
-                                <p class="text-xs font-medium uppercase tracking-wider opacity-90"
+                                <img src="images/thai.svg" alt="" class="object-cover w-5 h-5 rounded-full ring-1 ring-white/30">
+                                <p class="text-xs font-medium tracking-wider uppercase opacity-90"
                                    x-text="$store.lang.t('info_asking_price')"></p>
                             </div>
-                            <p class="font-heading text-4xl md:text-5xl font-bold leading-tight"
+                            <p class="text-4xl font-bold leading-tight font-heading md:text-5xl"
                                x-text="$store.lang.t('pill_price')"></p>
-                            <div class="mt-4 pt-3 border-t border-white/20 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm opacity-95">
+                            <div class="flex flex-wrap items-center justify-center pt-3 mt-4 text-sm border-t border-white/20 gap-x-4 gap-y-2 opacity-95">
                                 <span class="inline-flex items-center gap-1.5">
-                                    <img src="images/usa.svg" alt="" class="w-4 h-4 rounded-full object-cover">
+                                    <img src="images/usa.svg" alt="" class="object-cover w-4 h-4 rounded-full">
                                     <span x-text="$store.lang.t('info_price_usd')"></span>
                                 </span>
                                 <span class="text-white/40" aria-hidden="true">·</span>
                                 <span class="inline-flex items-center gap-1.5">
-                                    <img src="images/euro.svg" alt="" class="w-4 h-4 rounded-full object-cover">
+                                    <img src="images/euro.svg" alt="" class="object-cover w-4 h-4 rounded-full">
                                     <span x-text="$store.lang.t('info_price_eur')"></span>
                                 </span>
                             </div>
@@ -240,37 +240,37 @@
                         <!-- Specs list -->
                         <div class="px-6 py-5 space-y-3.5">
                             <div class="flex items-center gap-3 text-lg">
-                                <svg class="w-4 h-4 text-earth-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="flex-shrink-0 w-4 h-4 text-earth-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M3 22V10l9-8 9 8v12"/><path d="M9 22v-6h6v6"/>
                                 </svg>
                                 <span class="text-earth-secondary" x-text="$store.lang.t('pill_bedrooms')"></span>
                             </div>
                             <div class="flex items-center gap-3 text-lg">
-                                <svg class="w-4 h-4 text-earth-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="flex-shrink-0 w-4 h-4 text-earth-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M4 12h16a1 1 0 011 1v3a4 4 0 01-4 4H7a4 4 0 01-4-4v-3a1 1 0 011-1z"/><path d="M6 12V5a2 2 0 012-2h3v2.25"/><path d="M4 22v-2"/><path d="M20 22v-2"/>
                                 </svg>
                                 <span class="text-earth-secondary" x-text="$store.lang.t('pill_bathrooms')"></span>
                             </div>
                             <div class="flex items-center gap-3 text-lg">
-                                <svg class="w-4 h-4 text-earth-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="flex-shrink-0 w-4 h-4 text-earth-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
                                 </svg>
                                 <span class="text-earth-secondary" x-text="$store.lang.t('pill_living')"></span>
                             </div>
                             <div class="flex items-center gap-3 text-lg">
-                                <svg class="w-4 h-4 text-earth-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="flex-shrink-0 w-4 h-4 text-earth-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/>
                                 </svg>
                                 <span class="text-earth-secondary" x-text="$store.lang.t('pill_land')"></span>
                             </div>
                             <div class="flex items-center gap-3 text-lg">
-                                <svg class="w-4 h-4 text-earth-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="flex-shrink-0 w-4 h-4 text-earth-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
                                 </svg>
                                 <span class="text-earth-secondary" x-text="$store.lang.t('pill_year')"></span>
                             </div>
                             <div class="flex items-center gap-3 text-lg">
-                                <svg class="w-4 h-4 text-earth-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="flex-shrink-0 w-4 h-4 text-earth-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7L12 2z"/><path d="M9 12l2 2 4-4"/>
                                 </svg>
                                 <span class="text-earth-secondary" x-text="$store.lang.t('pill_ownership')"></span>
@@ -280,7 +280,7 @@
                         <!-- CTA button -->
                         <div class="px-6 pb-6">
                             <a href="#contact"
-                               class="block text-center bg-earth-accent text-white py-3 rounded-xl font-medium hover:bg-earth-secondary transition-colors">
+                               class="block py-3 font-medium text-center text-white transition-colors bg-earth-accent rounded-xl hover:bg-earth-secondary">
                                 <span x-text="$store.lang.t('overview_cta')"></span>
                             </a>
                         </div>
@@ -296,29 +296,29 @@
     <section class="py-16 md:py-24"
              x-data="scrollReveal"
              :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="font-heading text-3xl md:text-4xl text-center mb-3"
+        <div class="max-w-6xl px-4 mx-auto">
+            <h2 class="mb-3 text-3xl text-center font-heading md:text-4xl"
                 x-text="$store.lang.t('video_title')"></h2>
-            <p class="text-center text-earth-secondary mb-8"
+            <p class="mb-8 text-center text-earth-secondary"
                x-text="$store.lang.t('video_subtitle')"></p>
         </div>
 
-        <div class="relative max-w-6xl mx-auto px-4" x-data="droneVideo">
-            <div class="video-container relative rounded-xl overflow-hidden shadow-lg">
-                <div class="video-placeholder w-full flex items-center justify-center">
+        <div class="relative max-w-6xl px-4 mx-auto" x-data="droneVideo">
+            <div class="relative overflow-hidden shadow-lg video-container rounded-xl">
+                <div class="flex items-center justify-center w-full video-placeholder">
                     <video x-ref="video"
-                           class="absolute inset-0 w-full h-full object-cover"
+                           class="absolute inset-0 object-cover w-full h-full"
                            playsinline muted loop autoplay
                            data-src="oldtown-house-720p.mp4">
                     </video>
 
-                    <span x-show="!loaded" class="text-white/60 text-lg z-10">Video placeholder</span>
+                    <span x-show="!loaded" class="z-10 text-lg text-white/60">Video placeholder</span>
                 </div>
 
-                <div class="absolute bottom-4 right-4 flex gap-2 z-10">
+                <div class="absolute z-10 flex gap-2 bottom-4 right-4">
                     <button @click="togglePlay()"
                             :aria-label="$store.lang.t('a11y_play_video')"
-                            class="bg-white/80 hover:bg-white rounded-full p-3 shadow-lg transition-all cursor-pointer">
+                            class="p-3 transition-all rounded-full shadow-lg cursor-pointer bg-white/80 hover:bg-white">
                         <svg x-show="!playing" class="w-5 h-5 text-earth-text" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z"/>
                         </svg>
@@ -332,57 +332,57 @@
     </section>
 
     <!-- Property Details -->
-    <section class="py-16 md:py-24 bg-white"
+    <section class="py-16 bg-white md:py-24"
              x-data="scrollReveal" :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-        <div class="max-w-5xl mx-auto px-4">
-            <h2 class="font-heading text-3xl md:text-4xl text-center mb-12"
+        <div class="max-w-5xl px-4 mx-auto">
+            <h2 class="mb-12 text-3xl text-center font-heading md:text-4xl"
                 x-text="$store.lang.t('details_title')"></h2>
 
             <!-- 2 equal info cards -->
-            <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div class="grid gap-6 mb-6 md:grid-cols-2">
 
                 <!-- Location -->
-                <div class="p-6 rounded-xl bg-earth-bg border-t-2 border-earth-accent">
+                <div class="p-6 border-t-2 rounded-xl bg-earth-bg border-earth-accent">
                     <div class="flex items-center gap-2.5 mb-3">
-                        <svg class="w-5 h-5 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="flex-shrink-0 w-5 h-5 text-earth-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        <h3 class="font-heading text-lg font-semibold"
+                        <h3 class="text-lg font-semibold font-heading"
                             x-text="$store.lang.t('details_location_title')"></h3>
                     </div>
-                    <p class="text-earth-secondary leading-relaxed text-base"
+                    <p class="text-base leading-relaxed text-earth-secondary"
                        x-text="$store.lang.t('details_location_text')"></p>
                 </div>
 
                 <!-- Condition -->
-                <div class="p-6 rounded-xl bg-earth-bg border-t-2 border-earth-accent">
+                <div class="p-6 border-t-2 rounded-xl bg-earth-bg border-earth-accent">
                     <div class="flex items-center gap-2.5 mb-3">
-                        <svg class="w-5 h-5 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="flex-shrink-0 w-5 h-5 text-earth-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <h3 class="font-heading text-lg font-semibold"
+                        <h3 class="text-lg font-semibold font-heading"
                             x-text="$store.lang.t('details_condition_title')"></h3>
                     </div>
-                    <p class="text-earth-secondary leading-relaxed text-base"
+                    <p class="text-base leading-relaxed text-earth-secondary"
                        x-text="$store.lang.t('details_condition_text')"></p>
                 </div>
 
             </div>
 
             <!-- Price — professional card with breakdown -->
-            <div class="rounded-xl bg-white border border-earth-pill shadow-sm overflow-hidden">
+            <div class="overflow-hidden bg-white border shadow-sm rounded-xl border-earth-pill">
 
                 <!-- Header -->
                 <div class="px-6 md:px-8 py-5 border-b border-earth-pill flex items-center gap-2.5">
-                    <svg class="w-5 h-5 text-earth-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="flex-shrink-0 w-5 h-5 text-earth-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <h3 class="font-heading text-xl font-semibold"
+                    <h3 class="text-xl font-semibold font-heading"
                         x-text="$store.lang.t('details_price_title')"></h3>
                 </div>
 
@@ -390,13 +390,13 @@
                 <div class="grid md:grid-cols-2">
 
                     <!-- Asking price block (accent) -->
-                    <div class="bg-earth-accent p-6 md:p-8 text-white text-center flex flex-col justify-center">
+                    <div class="flex flex-col justify-center p-6 text-center text-white bg-earth-accent md:p-8">
                         <div class="flex items-center justify-center gap-2 mb-2">
-                            <img src="images/thai.svg" alt="" class="w-5 h-5 rounded-full object-cover ring-1 ring-white/30">
-                            <p class="text-xs font-medium uppercase tracking-wider opacity-90"
+                            <img src="images/thai.svg" alt="" class="object-cover w-5 h-5 rounded-full ring-1 ring-white/30">
+                            <p class="text-xs font-medium tracking-wider uppercase opacity-90"
                                x-text="$store.lang.t('info_asking_price')"></p>
                         </div>
-                        <p class="font-heading text-3xl md:text-4xl font-bold leading-tight"
+                        <p class="text-3xl font-bold leading-tight font-heading md:text-4xl"
                            x-text="$store.lang.t('pill_price')"></p>
                         <div class="mt-4 pt-3 border-t border-white/20 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-xs opacity-95">
                             <span class="inline-flex items-center gap-1.5">
@@ -412,7 +412,7 @@
                     </div>
 
                     <!-- Notes + CTA -->
-                    <div class="p-6 md:p-8 flex flex-col gap-5">
+                    <div class="flex flex-col gap-5 p-6 md:p-8">
                         <!-- Mortgage note -->
                         <div class="flex gap-3">
                             <svg class="w-5 h-5 text-earth-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -420,9 +420,9 @@
                                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <div class="flex-1">
-                                <p class="text-xs font-semibold uppercase tracking-wider text-earth-text mb-1"
+                                <p class="mb-1 text-xs font-semibold tracking-wider uppercase text-earth-text"
                                    x-text="$store.lang.t('details_price_mortgage_label')"></p>
-                                <p class="text-earth-secondary leading-relaxed text-sm"
+                                <p class="text-sm leading-relaxed text-earth-secondary"
                                    x-text="$store.lang.t('details_price_mortgage_text')"></p>
                             </div>
                         </div>
@@ -433,15 +433,15 @@
                                       d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                             <div class="flex-1">
-                                <p class="text-xs font-semibold uppercase tracking-wider text-earth-text mb-1"
+                                <p class="mb-1 text-xs font-semibold tracking-wider uppercase text-earth-text"
                                    x-text="$store.lang.t('details_price_fees_label')"></p>
-                                <p class="text-earth-secondary leading-relaxed text-sm"
+                                <p class="text-sm leading-relaxed text-earth-secondary"
                                    x-text="$store.lang.t('details_price_fees_text')"></p>
                             </div>
                         </div>
                         <!-- CTA -->
                         <a href="#contact"
-                           class="mt-1 inline-block text-center bg-earth-accent text-white px-6 py-3 rounded-xl font-medium hover:bg-earth-secondary transition-colors">
+                           class="inline-block px-6 py-3 mt-1 font-medium text-center text-white transition-colors bg-earth-accent rounded-xl hover:bg-earth-secondary">
                             <span x-text="$store.lang.t('overview_cta')"></span>
                         </a>
                     </div>
@@ -456,11 +456,11 @@
     <section class="py-16 md:py-24"
              x-data="scrollReveal"
              :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-        <div class="max-w-5xl mx-auto px-4">
-            <h2 class="font-heading text-3xl md:text-4xl text-center mb-8"
+        <div class="max-w-5xl px-4 mx-auto">
+            <h2 class="mb-8 text-3xl text-center font-heading md:text-4xl"
                 x-text="$store.lang.t('map_title')"></h2>
 
-            <div class="rounded-xl overflow-hidden shadow-lg" x-data="lazyMap">
+            <div class="overflow-hidden shadow-lg rounded-xl" x-data="lazyMap">
                 <iframe
                     x-ref="frame"
                     data-src="https://maps.google.com/maps?q=7.5231663,99.0960800&z=14&output=embed"
@@ -478,14 +478,14 @@
 
     <!-- Contact Section -->
     <div x-data="scrollReveal" :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-    <section id="contact" class="py-16 md:py-24 bg-white" x-data="contactForm">
-        <div class="max-w-5xl mx-auto px-4">
-            <h2 class="font-heading text-3xl md:text-4xl text-center mb-3"
+    <section id="contact" class="py-16 bg-white md:py-24" x-data="contactForm">
+        <div class="max-w-5xl px-4 mx-auto">
+            <h2 class="mb-3 text-3xl text-center font-heading md:text-4xl"
                 x-text="$store.lang.t('contact_title')"></h2>
-            <p class="text-center text-earth-secondary mb-12"
+            <p class="mb-12 text-center text-earth-secondary"
                x-text="$store.lang.t('contact_subtitle')"></p>
 
-            <div class="grid md:grid-cols-2 gap-12">
+            <div class="grid gap-12 md:grid-cols-2">
                 <!-- Form -->
                 <form @submit.prevent="submit()" class="space-y-4">
                     <!-- Honeypot (hidden from humans) -->
@@ -496,57 +496,57 @@
                     <div>
                         <input type="text" x-model="name" required
                                :placeholder="$store.lang.t('contact_name')"
-                               class="w-full px-4 py-3 rounded-lg border border-earth-pill bg-earth-bg focus:outline-none focus:ring-2 focus:ring-earth-accent/50 transition-all"
+                               class="w-full px-4 py-3 transition-all border rounded-lg border-earth-pill bg-earth-bg focus:outline-none focus:ring-2 focus:ring-earth-accent/50"
                                @focus="resetState()">
                     </div>
                     <div>
                         <input type="email" x-model="email" required
                                :placeholder="$store.lang.t('contact_email')"
-                               class="w-full px-4 py-3 rounded-lg border border-earth-pill bg-earth-bg focus:outline-none focus:ring-2 focus:ring-earth-accent/50 transition-all"
+                               class="w-full px-4 py-3 transition-all border rounded-lg border-earth-pill bg-earth-bg focus:outline-none focus:ring-2 focus:ring-earth-accent/50"
                                @focus="resetState()">
                     </div>
                     <div>
                         <input type="tel" x-model="phone"
                                :placeholder="$store.lang.t('contact_phone')"
-                               class="w-full px-4 py-3 rounded-lg border border-earth-pill bg-earth-bg focus:outline-none focus:ring-2 focus:ring-earth-accent/50 transition-all"
+                               class="w-full px-4 py-3 transition-all border rounded-lg border-earth-pill bg-earth-bg focus:outline-none focus:ring-2 focus:ring-earth-accent/50"
                                @focus="resetState()">
                     </div>
                     <div>
                         <textarea x-model="message" rows="4"
                                   :placeholder="$store.lang.t('contact_message')"
-                                  class="w-full px-4 py-3 rounded-lg border border-earth-pill bg-earth-bg focus:outline-none focus:ring-2 focus:ring-earth-accent/50 transition-all resize-none"
+                                  class="w-full px-4 py-3 transition-all border rounded-lg resize-none border-earth-pill bg-earth-bg focus:outline-none focus:ring-2 focus:ring-earth-accent/50"
                                   @focus="resetState()"></textarea>
                     </div>
 
                     <button type="submit" :disabled="state === 'sending'"
-                            class="w-full bg-earth-accent text-white py-3 rounded-lg font-medium hover:bg-earth-secondary transition-colors disabled:opacity-50 cursor-pointer">
+                            class="w-full py-3 font-medium text-white transition-colors rounded-lg cursor-pointer bg-earth-accent hover:bg-earth-secondary disabled:opacity-50">
                         <span x-text="state === 'sending' ? $store.lang.t('contact_sending') : $store.lang.t('contact_send')"></span>
                     </button>
 
                     <!-- Success -->
                     <div x-show="state === 'success'" x-transition
-                         class="p-4 bg-green-50 text-green-700 rounded-lg text-sm"
+                         class="p-4 text-sm text-green-700 rounded-lg bg-green-50"
                          x-text="$store.lang.t('contact_success')"></div>
 
                     <!-- Error -->
                     <div x-show="state === 'error'" x-transition
-                         class="p-4 bg-red-50 text-red-700 rounded-lg text-sm"
+                         class="p-4 text-sm text-red-700 rounded-lg bg-red-50"
                          x-text="$store.lang.t('contact_error')"></div>
                 </form>
 
                 <!-- Contact Info & Messaging Buttons -->
                 <div class="flex flex-col justify-center space-y-6">
                     <!-- Agent Info -->
-                    <div class="flex items-center gap-3 justify-center md:justify-start">
+                    <div class="flex items-center justify-center gap-3 md:justify-start">
                         <!-- Agent profile photo -->
                         <img src="images/bee-profile.jpg" alt="Bee"
                              width="48" height="48" loading="lazy" decoding="async"
-                             class="w-12 h-12 rounded-full object-cover flex-shrink-0">
+                             class="flex-shrink-0 object-cover w-12 h-12 rounded-full">
 
                         <div class="text-left">
                             <p class="text-earth-secondary text-sm mb-0.5"
                                x-text="$store.lang.t('contact_agent')"></p>
-                            <p class="font-heading text-xl font-semibold"
+                            <p class="text-xl font-semibold font-heading"
                                x-text="$store.lang.t('contact_agent_name')"></p>
                         </div>
                     </div>
@@ -578,10 +578,10 @@
     <footer class="py-8 border-t border-earth-pill"
             x-data="scrollReveal"
             :class="revealed ? 'reveal-visible' : 'reveal-hidden'">
-        <div class="max-w-5xl mx-auto px-4 text-center text-earth-secondary text-sm">
-            <img src="images/lanta-homes-logo.png" alt="Lanta.Homes" width="200" height="36" loading="lazy" decoding="async" class="h-9 w-auto mx-auto mb-3">
+        <div class="max-w-5xl px-4 mx-auto text-sm text-center text-earth-secondary">
+            <img src="images/lanta-homes-logo.png" alt="Lanta.Homes" width="200" height="36" loading="lazy" decoding="async" class="w-auto mx-auto mb-3 h-9">
             <p class="flex items-center justify-center gap-2">
-                <img src="images/bee-profile.jpg" alt="Bee" width="28" height="28" loading="lazy" decoding="async" class="w-7 h-7 rounded-full object-cover">
+                <img src="images/bee-profile.jpg" alt="Bee" width="36" height="36" loading="lazy" decoding="async" class="object-cover w-10 h-10 rounded-full">
                 <span>
                     <span x-text="$store.lang.t('footer_listed_by')"></span>
                     <span x-text="$store.lang.t('contact_agent_name')"></span>
