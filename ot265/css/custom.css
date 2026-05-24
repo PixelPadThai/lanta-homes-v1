@@ -158,6 +158,61 @@ html:not(.lang-ready) [x-text] {
     animation: fade-in-up 0.7s ease-out var(--reveal-delay, 0ms) forwards;
 }
 
+/* ── Agent Contact Card ────────────────────────────────────── */
+/* Self-contained card (avoids depending on uncompiled Tailwind
+   utilities like w-20/h-20/p-5/ring-white). Colors are the earth
+   palette tokens used elsewhere. */
+.agent-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background-color: #FAF6F1;
+    border: 1px solid #E8DDD3;
+    border-radius: 0.75rem;
+}
+
+.agent-card__avatar {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 9999px;
+    box-shadow: 0 0 0 3px #ffffff, 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.agent-card__label {
+    margin-bottom: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8B7355;
+}
+
+.agent-card__name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.375rem;
+    font-weight: 600;
+    line-height: 1.15;
+    color: #3D3229;
+}
+
+.agent-card__updated {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #8B7355;
+}
+
+.agent-card__updated-icon {
+    width: 0.85rem;
+    height: 0.85rem;
+    color: #C4956A;
+}
+
 /* ── Video Section ─────────────────────────────────────────── */
 .video-container video {
     object-fit: cover;
