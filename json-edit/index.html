@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>JSON Editor — lanta.homes</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js"></script>
+  <script src="js/alpine.min.js" defer></script>
+</head>
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased min-h-screen selection:bg-amber-200 dark:selection:bg-amber-500/30">
+
+<div x-data x-init="$store.editor.init()" class="flex flex-col min-h-screen">
+
+  <header class="sticky top-0 z-30 backdrop-blur-md bg-white/80 dark:bg-zinc-950/80 border-b border-zinc-200 dark:border-zinc-800">
+    <div class="px-3 sm:px-4 lg:px-6 py-2.5 flex items-center gap-2 sm:gap-3">
+
+      <button @click="$store.editor.sidebarOpen = !$store.editor.sidebarOpen" class="lg:hidden p-1.5 -ml-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Sections">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-amber-500 text-white grid place-items-center text-sm font-bold">{}</div>
+        <div>
+          <div class="text-sm font-semibold leading-tight">JSON Editor</div>
+          <div class="text-[10px] text-zinc-500 leading-tight hidden sm:block">ot265 / lang.json</div>
+        </div>
+      </div>
+
+      <div class="flex-1"></div>
+
+      <div class="relative flex-1 max-w-md hidden sm:block">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search-input" x-model="$store.editor.search" placeholder="Search keys, values..." class="w-full pl-9 pr-8 py-1.5 text-sm rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500/40">
+        <kbd x-show="!$store.editor.search" class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-zinc-400 border border-zinc-300 dark:border-zinc-700 rounded px-1">⌘K</kbd>
+        <button x-show="$store.editor.search" @click="$store.editor.search = ''" class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200" aria-label="Clear">×</button>
+      </div>
+
+      <div class="hidden lg:flex items-center gap-0.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg p-0.5 border border-zinc-200 dark:border-zinc-800">
+        <button @click="$store.editor.setView('tabs')" :class="$store.editor.viewMode === 'tabs' ? 'bg-white dark:bg-zinc-800 shadow-sm text-zinc-900 dark:text-zinc-100' : 'text-zinc-500'" class="px-2.5 py-1 text-xs font-medium rounded-md transition">Tabs</button>
+        <button @click="$store.editor.setView('split')" :class="$store.editor.viewMode === 'split' ? 'bg-white dark:bg-zinc-800 shadow-sm text-zinc-900 dark:text-zinc-100' : 'text-zinc-500'" class="px-2.5 py-1 text-xs font-medium rounded-md transition">Split</button>
+      </div>
+
+      <div class="text-[10px] text-zinc-500 hidden md:block whitespace-nowrap" x-show="$store.editor.lastSaved">
+        Saved <span x-text="$store.editor.formatTime($store.editor.lastSaved)"></span>
+      </div>
+
+      <button @click="$store.editor.toggleDark()" class="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Toggle theme">
+        <svg x-show="!$store.editor.darkMode" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg x-show="$store.editor.darkMode" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+
+      <button
+        @click="$store.editor.dirtyCount() > 0 ? $store.editor.modal = 'diff' : null"
+        :disabled="$store.editor.dirtyCount() === 0 || $store.editor.saving"
+        :class="$store.editor.dirtyCount() > 0 ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed'"
+        class="px-3 py-1.5 text-sm font-medium rounded-lg flex items-center gap-2 transition shadow-sm">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <span>Save</span>
+        <span x-show="$store.editor.dirtyCount() > 0" class="bg-black/20 px-1.5 py-0.5 rounded text-[10px] font-semibold" x-text="$store.editor.dirtyCount()"></span>
+      </button>
+    </div>
+
+    <div class="sm:hidden px-3 pb-2">
+      <input x-model="$store.editor.search" placeholder="Search..." class="w-full px-3 py-1.5 text-sm rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/40">
+    </div>
+  </header>
+
+  <div class="flex-1 flex">
+
+    <aside
+      :class="$store.editor.sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+      class="fixed lg:sticky inset-y-0 left-0 z-20 w-64 lg:w-56 shrink-0 bg-white dark:bg-zinc-950 lg:bg-transparent border-r border-zinc-200 dark:border-zinc-800 lg:top-[57px] lg:self-start lg:h-[calc(100vh-57px)] overflow-y-auto transition-transform pt-16 lg:pt-0">
+
+      <div class="p-4 space-y-1">
+        <div class="flex items-center justify-between mb-2 px-2">
+          <div class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Sections</div>
+          <button @click="$store.editor.sidebarOpen = false" class="lg:hidden text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">×</button>
+        </div>
+
+        <template x-for="[sec, keys] in $store.editor.sectionList()" :key="sec">
+          <a :href="'#sec-' + sec" @click="$store.editor.sidebarOpen = false" class="flex items-center justify-between px-2 py-1.5 text-sm rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 group">
+            <span x-text="sec" class="truncate"></span>
+            <span class="flex items-center gap-1.5 shrink-0">
+              <span x-show="$store.editor.sectionDirtyCount(sec) > 0" class="bg-amber-500 text-white text-[10px] font-medium px-1.5 py-0.5 rounded-full" x-text="$store.editor.sectionDirtyCount(sec)"></span>
+              <span x-text="keys.length" class="text-[10px] text-zinc-400 tabular-nums"></span>
+            </span>
+          </a>
+        </template>
+
+        <div class="pt-3 mt-3 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
+          <button @click="$store.editor.download()" class="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download JSON
+          </button>
+          <button @click="$store.editor.openBackups()" class="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            Backups
+          </button>
+          <button @click="$store.editor.discard()" :disabled="$store.editor.dirtyCount() === 0" :class="$store.editor.dirtyCount() === 0 ? 'opacity-40 cursor-not-allowed' : ''" class="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
+            Discard changes
+          </button>
+        </div>
+
+        <div class="pt-3 mt-3 border-t border-zinc-200 dark:border-zinc-800 text-[10px] text-zinc-400 px-2 space-y-1">
+          <div>⌘K · search</div>
+          <div>⌘S · review &amp; save</div>
+          <div>Esc · close modal</div>
+        </div>
+      </div>
+    </aside>
+
+    <div x-show="$store.editor.sidebarOpen" @click="$store.editor.sidebarOpen = false" class="fixed inset-0 z-10 bg-black/30 lg:hidden"></div>
+
+    <main class="flex-1 min-w-0">
+
+      <div class="sticky top-[57px] sm:top-[49px] z-10 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur border-b border-zinc-200 dark:border-zinc-800"
+           x-show="$store.editor.viewMode === 'tabs'">
+        <div class="px-4 lg:px-6 py-2 flex items-center gap-1">
+          <button @click="$store.editor.setLang('en')" :class="$store.editor.activeLang === 'en' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900' : 'hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400'" class="px-3 py-1.5 text-sm font-medium rounded-md transition flex items-center gap-2">
+            English
+            <span x-show="$store.editor.dirtyCount('en') > 0" class="bg-amber-500 text-white text-[10px] px-1.5 rounded-full" x-text="$store.editor.dirtyCount('en')"></span>
+          </button>
+          <button @click="$store.editor.setLang('th')" :class="$store.editor.activeLang === 'th' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900' : 'hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400'" class="px-3 py-1.5 text-sm font-medium rounded-md transition flex items-center gap-2">
+            ภาษาไทย
+            <span x-show="$store.editor.dirtyCount('th') > 0" class="bg-amber-500 text-white text-[10px] px-1.5 rounded-full" x-text="$store.editor.dirtyCount('th')"></span>
+          </button>
+          <div class="flex-1"></div>
+          <div class="text-[11px] text-zinc-500 tabular-nums" x-show="$store.editor.search">
+            <span x-text="$store.editor.totalVisible()"></span> match<span x-show="$store.editor.totalVisible() !== 1">es</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-3 sm:px-4 lg:px-6 py-4 max-w-5xl mx-auto">
+
+        <div x-show="$store.editor.loading" class="text-center py-12 text-zinc-500">
+          <div class="inline-block w-5 h-5 border-2 border-zinc-300 border-t-amber-500 rounded-full animate-spin"></div>
+          <div class="mt-2 text-sm">Loading lang.json...</div>
+        </div>
+
+        <div x-show="!$store.editor.loading && $store.editor.search && $store.editor.totalVisible() === 0" class="text-center py-12 text-zinc-500 text-sm">
+          No keys match "<span x-text="$store.editor.search"></span>"
+        </div>
+
+        <template x-for="[sec, allKeys] in $store.editor.sectionList()" :key="sec">
+          <section :id="'sec-' + sec" class="mb-6 scroll-mt-32" x-show="$store.editor.visibleKeys(allKeys).length > 0">
+            <button @click="$store.editor.toggleSection(sec)" class="w-full flex items-center gap-2 mb-2.5 group text-left">
+              <svg :class="$store.editor.isCollapsed(sec) ? '-rotate-90' : ''" class="w-4 h-4 text-zinc-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              <h2 x-text="sec" class="text-base font-semibold"></h2>
+              <span class="text-xs text-zinc-400 tabular-nums" x-text="$store.editor.visibleKeys(allKeys).length"></span>
+              <span x-show="$store.editor.sectionDirtyCount(sec) > 0" class="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full font-medium">
+                <span x-text="$store.editor.sectionDirtyCount(sec)"></span> changed
+              </span>
+            </button>
+
+            <div x-show="!$store.editor.isCollapsed(sec)" class="space-y-2.5">
+              <template x-for="key in $store.editor.visibleKeys(allKeys)" :key="key">
+                <div
+                  :class="$store.editor.rowDirty(key) ? 'border-amber-300 dark:border-amber-500/40 bg-amber-50/30 dark:bg-amber-500/5' : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900'"
+                  class="border rounded-xl p-3 sm:p-4 transition">
+                  <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+                    <code class="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono break-all" x-text="key"></code>
+                    <template x-if="$store.editor.parityWarn(key)">
+                      <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300 flex items-center gap-1">
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span x-text="$store.editor.parityWarn(key)"></span>
+                      </span>
+                    </template>
+                  </div>
+
+                  <div x-show="$store.editor.viewMode === 'split'" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <div class="flex items-center justify-between mb-1">
+                        <label class="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">EN</label>
+                        <span x-show="$store.editor.isDirty(key, 'en')" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      </div>
+                      <textarea x-model="$store.editor.data.en[key]" class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans" rows="1" dir="auto"></textarea>
+                      <div class="text-[10px] text-zinc-400 mt-1 tabular-nums" x-text="(($store.editor.data.en[key] || '').length) + ' chars'"></div>
+                    </div>
+                    <div>
+                      <div class="flex items-center justify-between mb-1">
+                        <label class="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">TH</label>
+                        <span x-show="$store.editor.isDirty(key, 'th')" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      </div>
+                      <textarea x-model="$store.editor.data.th[key]" class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans" rows="1" dir="auto"></textarea>
+                      <div class="text-[10px] text-zinc-400 mt-1 tabular-nums" x-text="(($store.editor.data.th[key] || '').length) + ' chars'"></div>
+                    </div>
+                  </div>
+
+                  <div x-show="$store.editor.viewMode === 'tabs'">
+                    <textarea
+                      x-model="$store.editor.data[$store.editor.activeLang][key]"
+                      class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans"
+                      rows="1" dir="auto"></textarea>
+                    <div class="flex items-center justify-between mt-1">
+                      <div class="text-[10px] text-zinc-400 tabular-nums" x-text="(($store.editor.data[$store.editor.activeLang][key] || '').length) + ' chars'"></div>
+                      <div x-show="$store.editor.activeLang === 'en' && !$store.editor.isMissing(key, 'th')" class="text-[10px] text-zinc-400 truncate max-w-[60%] italic" :title="$store.editor.data.th[key]">
+                        TH: <span x-text="$store.editor.data.th[key]"></span>
+                      </div>
+                      <div x-show="$store.editor.activeLang === 'th' && !$store.editor.isMissing(key, 'en')" class="text-[10px] text-zinc-400 truncate max-w-[60%] italic" :title="$store.editor.data.en[key]">
+                        EN: <span x-text="$store.editor.data.en[key]"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </section>
+        </template>
+      </div>
+    </main>
+  </div>
+
+  <div x-show="$store.editor.toast" x-transition.opacity x-cloak class="fixed bottom-6 right-6 z-50 pointer-events-none">
+    <div :class="{
+          'bg-emerald-500': $store.editor.toast?.kind === 'success',
+          'bg-rose-500': $store.editor.toast?.kind === 'error',
+          'bg-zinc-800 dark:bg-zinc-700': $store.editor.toast?.kind === 'info'
+         }"
+         class="text-white px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium" x-text="$store.editor.toast?.text"></div>
+  </div>
+
+  <div x-show="$store.editor.modal === 'diff'" x-cloak @click.self="$store.editor.modal = null" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-zinc-200 dark:border-zinc-800">
+      <div class="px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+        <h3 class="font-semibold text-sm flex items-center gap-2">
+          Review changes
+          <span class="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full" x-text="$store.editor.dirtyCount()"></span>
+        </h3>
+        <button @click="$store.editor.modal = null" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 text-xl leading-none">×</button>
+      </div>
+      <div class="overflow-y-auto p-4 space-y-3 flex-1">
+        <template x-for="change in $store.editor.diff()" :key="change.key + ':' + change.lang">
+          <div class="border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden text-xs">
+            <div class="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-between">
+              <code class="font-mono text-zinc-700 dark:text-zinc-300" x-text="change.key"></code>
+              <span class="uppercase text-[10px] tracking-wider text-zinc-500 font-medium" x-text="change.lang"></span>
+            </div>
+            <div class="grid grid-cols-2 divide-x divide-zinc-200 dark:divide-zinc-800">
+              <div class="p-3 bg-rose-50/40 dark:bg-rose-950/20 text-rose-900 dark:text-rose-200">
+                <div class="text-[9px] uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-1 font-medium">Before</div>
+                <div class="whitespace-pre-wrap break-words" x-text="change.old || '(empty)'"></div>
+              </div>
+              <div class="p-3 bg-emerald-50/40 dark:bg-emerald-950/20 text-emerald-900 dark:text-emerald-200">
+                <div class="text-[9px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1 font-medium">After</div>
+                <div class="whitespace-pre-wrap break-words" x-text="change.new || '(empty)'"></div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="px-5 py-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-2">
+        <div class="text-[11px] text-zinc-500">A backup is created automatically before each save.</div>
+        <div class="flex gap-2">
+          <button @click="$store.editor.modal = null" class="px-3 py-1.5 text-sm rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300">Cancel</button>
+          <button @click="$store.editor.save()" :disabled="$store.editor.saving" class="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-medium rounded-lg shadow-sm flex items-center gap-2">
+            <svg x-show="$store.editor.saving" class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+            <span x-text="$store.editor.saving ? 'Saving...' : 'Save to lang.json'"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div x-show="$store.editor.modal === 'backups'" x-cloak @click.self="$store.editor.modal = null" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-hidden flex flex-col border border-zinc-200 dark:border-zinc-800">
+      <div class="px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+        <h3 class="font-semibold text-sm">Backups</h3>
+        <button @click="$store.editor.modal = null" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 text-xl leading-none">×</button>
+      </div>
+      <div class="overflow-y-auto p-3 space-y-1.5 flex-1">
+        <div x-show="$store.editor.backups.length === 0" class="text-center py-8 text-sm text-zinc-500">No backups yet — they'll appear here after your first save.</div>
+        <template x-for="b in $store.editor.backups" :key="b.name">
+          <div class="flex items-center justify-between gap-2 p-2.5 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-950 border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800">
+            <div class="min-w-0">
+              <div class="text-sm font-medium truncate" x-text="$store.editor.formatBackupName(b.name)"></div>
+              <div class="text-[10px] text-zinc-500 tabular-nums" x-text="(b.size / 1024).toFixed(1) + ' KB'"></div>
+            </div>
+            <button @click="$store.editor.restoreBackup(b.name)" class="px-2.5 py-1 text-xs font-medium rounded-md border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 shrink-0">Restore</button>
+          </div>
+        </template>
+      </div>
+      <div class="px-5 py-3 border-t border-zinc-200 dark:border-zinc-800 text-[11px] text-zinc-500">
+        Last 30 saves are kept. Restoring also backs up the current file first.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

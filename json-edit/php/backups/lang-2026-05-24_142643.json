@@ -3,10 +3,6 @@
     "lang_toggle": "ไทย",
     "hero_title": "Modern 2-Bed House Near Old Town",
     "hero_tagline": "Old Town, Koh Lanta",
-    "hero_title_2": "Steps From The Waterfront",
-    "hero_tagline_2": "Cafés, pier and 7-Eleven on the doorstep",
-    "hero_title_3": "A Quiet Residential Soi",
-    "hero_tagline_3": "5 minutes' walk to the waterfront",
     "hero_mobile_title": "Modern 2-Bed House",
     "hero_mobile_location": "Old Town, Koh Lanta",
     "pill_price": "1,950,000 THB",
@@ -71,17 +67,12 @@
     "a11y_next_image": "Next image",
     "a11y_play_video": "Play or pause video",
     "a11y_scroll_down": "Scroll to overview",
-    "a11y_close": "Close",
-    "open_gallery": "Open Gallery"
+    "a11y_close": "Close"
   },
   "th": {
     "lang_toggle": "EN",
     "hero_title": "บ้าน 2 ห้องนอนทันสมัย ใกล้โอลด์ทาวน์",
     "hero_tagline": "โอลด์ทาวน์ เกาะลันตา",
-    "hero_title_2": "ใกล้ริมน้ำเพียงไม่กี่ก้าว",
-    "hero_tagline_2": "คาเฟ่ ท่าเรือ และเซเว่นอยู่หน้าประตูบ้าน",
-    "hero_title_3": "ซอยที่พักอาศัยเงียบสงบ",
-    "hero_tagline_3": "เดิน 5 นาทีถึงริมน้ำ",
     "hero_mobile_title": "บ้าน 2 ห้องนอน",
     "hero_mobile_location": "โอลด์ทาวน์ เกาะลันตา",
     "pill_price": "1,950,000 บาท",
@@ -146,7 +137,6 @@
     "a11y_next_image": "ภาพถัดไป",
     "a11y_play_video": "เล่นหรือหยุดวิดีโอ",
     "a11y_scroll_down": "เลื่อนไปยังภาพรวม",
-    "a11y_close": "ปิด",
-    "open_gallery": "ดูภาพทั้งหมด"
+    "a11y_close": "ปิด"
   }
 }

@@ -17,16 +17,35 @@ html:not(.lang-ready) [x-text] {
 }
 
 /* ── Hero ──────────────────────────────────────────────────── */
-/* Responsive hero background: phones get the lighter 1200px image,
-   desktop (lg, ≥1024px) gets the full 1920px image. Set here (not inline)
-   so the media query can swap it. */
-[data-hero] {
-    background-image: url('../hero-web-mobile.jpg');
+/* Hero slider: Keen Slider with native mouse/touch drag. The slider
+   container fills the hero (absolute inset:0); each slide is sized
+   100%×100% so images cover the slot. `draggable="false"` on each
+   <img> prevents the browser's native image-drag from hijacking the
+   slider's pointer events on desktop. */
+.hero-keen-slider,
+.hero-keen-slider .keen-slider__slide {
+    height: 100%;
 }
-@media (min-width: 1024px) {
-    [data-hero] {
-        background-image: url('../hero-web.jpg');
-    }
+.hero-keen-slider .keen-slider__slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+}
+.hero-keen-slider {
+    cursor: grab;
+}
+.hero-keen-slider:active {
+    cursor: grabbing;
+}
+
+/* Text overlay briefly fades around the index swap (JS toggles
+   .hero-overlay-fading for ~350ms while activeIdx flips). */
+.hero-overlay {
+    transition: opacity 0.35s ease-in-out;
+}
+.hero-overlay-fading {
+    opacity: 0;
 }
 
 /* Hero text: white-to-silver vertical gradient via background-clip,

@@ -54,6 +54,74 @@ function registerAlpine() {
         }
     });
 
+    // ── Hero Slider ─────────────────────────────────────────────
+    // Keen Slider with native mouse/touch drag. Slide 1 is the LCP
+    // (eager + preloaded). Slides 2 & 3 carry `data-src`/`data-srcset`
+    // and are upgraded to real src after window.load fires, so they
+    // don't compete with critical assets. Autoplay (6s) pauses while
+    // the user is dragging and resumes when the animation settles.
+    Alpine.data('heroSlider', () => ({
+        activeIdx: 0,
+        transitioning: false,
+        slider: null,
+
+        slides: [
+            { titleKey: 'hero_title',   tagKey: 'hero_tagline'   },
+            { titleKey: 'hero_title_2', tagKey: 'hero_tagline_2' },
+            { titleKey: 'hero_title_3', tagKey: 'hero_tagline_3' },
+        ],
+
+        init() {
+            const start = () => {
+                // Upgrade deferred slide images.
+                this.$el.querySelectorAll('img[data-src]').forEach(img => {
+                    if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+                    if (img.dataset.sizes)  img.sizes  = img.dataset.sizes;
+                    img.src = img.dataset.src;
+                });
+                this.buildSlider();
+            };
+
+            if (document.readyState === 'complete') {
+                start();
+            } else {
+                window.addEventListener('load', start, { once: true });
+            }
+        },
+
+        buildSlider() {
+            const el = this.$refs.slider;
+            if (!el) return;
+
+            // Autoplay plugin — pauses on drag, resumes on settle. Hover
+            // does NOT pause (the hero is large and users often rest the
+            // cursor here while reading the page below).
+            const autoplay = (slider, ms = 5000) => {
+                let timeout;
+                const clear = () => clearTimeout(timeout);
+                const schedule = () => { clear(); timeout = setTimeout(() => slider.next(), ms); };
+                slider.on('created',         schedule);
+                slider.on('dragStarted',     clear);
+                slider.on('animationEnded',  schedule);
+                slider.on('updated',         schedule);
+            };
+
+            this.slider = new KeenSlider(el, {
+                loop: true,
+                slides: { perView: 1 },
+                slideChanged: (s) => {
+                    const idx = s.track.details.rel;
+                    // Brief overlay fade to soften the text swap.
+                    this.transitioning = true;
+                    setTimeout(() => {
+                        this.activeIdx = idx;
+                        this.transitioning = false;
+                    }, 200);
+                },
+            }, [autoplay]);
+        }
+    }));
+
     // ── Lang Toggle (hides once you scroll past the hero) ───────
     // Scroll-based rather than IntersectionObserver: on mobile the hero is
     // position:fixed, so it never "leaves" the viewport for an observer.
@@ -348,10 +416,14 @@ function registerAlpine() {
 
         init() {
             this.$nextTick(() => this.buildSliders());
-            // Cross-component: Old Town slider lives in its own Alpine root,
-            // so it asks us to open the lightbox via a window event.
+            // Cross-component triggers: the Old Town slider and the
+            // hero's Open Gallery button live in their own Alpine roots,
+            // so they ask us to open the lightbox via window events.
             window.addEventListener('open-oldtown-lightbox', () => {
                 this.openOldtownLightbox();
+            });
+            window.addEventListener('open-gallery-lightbox', () => {
+                this.openLightbox();
             });
         },
 
