@@ -29,13 +29,23 @@ html:not(.lang-ready) [x-text] {
     }
 }
 
-.hero-overlay {
-    background: linear-gradient(
-        to bottom,
-        rgba(61, 50, 41, 0.35) 0%,
-        rgba(61, 50, 41, 0.1) 50%,
-        rgba(61, 50, 41, 0.55) 100%
-    );
+/* Hero text: white-to-silver vertical gradient via background-clip,
+   with filter:drop-shadow so the shadow follows the gradient glyphs
+   (text-shadow doesn't render on transparent fill). */
+.hero-text {
+    background: linear-gradient(180deg, #ffffff 0%, #ffffff 60%, #c8ccd1 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45))
+            drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+}
+
+.hero-text-soft {
+    color: #ffffff;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5),
+                 0 1px 1px rgba(0, 0, 0, 0.35);
 }
 
 /* Mobile: hero is pinned behind the page so content scrolls up over it.
@@ -74,6 +84,22 @@ html:not(.lang-ready) [x-text] {
 
 .scroll-indicator {
     animation: bounce-down 2s ease-in-out infinite;
+}
+
+/* ── Pills ─────────────────────────────────────────────────── */
+/* Generic pill polish: hairline border + faint top-to-bottom sheen
+   (light highlight up top, soft shade at bottom). Semi-transparent
+   so it layers cleanly over either accent (gold) or earth-pill bg. */
+.pill {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0) 55%,
+        rgba(0, 0, 0, 0.08) 100%
+    );
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28),
+                0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* ── Pills Scroll (hide scrollbar) ─────────────────────────── */
