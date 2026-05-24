@@ -80,38 +80,38 @@
 
     <!-- Mobile info bar (sticky below hero, hidden on lg+) -->
     <div class="sticky top-0 z-40 bg-white border-b shadow-sm lg:hidden border-earth-pill">
-        <div class="max-w-6xl px-3 py-2 mx-auto">
-            <p class="text-lg font-semibold leading-tight font-heading text-earth-text"
-               x-text="$store.lang.t('hero_mobile_title')"></p>
-            <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center justify-between gap-3 max-w-6xl px-3 py-2 mx-auto">
+            <div class="min-w-0">
+                <p class="text-lg font-semibold leading-tight font-heading text-earth-text"
+                   x-text="$store.lang.t('hero_mobile_title')"></p>
                 <span class="text-sm text-earth-secondary"
                       x-text="$store.lang.t('hero_mobile_location')"></span>
-                <span class="px-3 py-1 text-xs font-semibold text-white rounded-full bg-earth-accent whitespace-nowrap pill"
-                      x-data="{
-                          idx: 0,
-                          fading: false,
-                          items: [
-                              { flag: 'thai.svg', key: 'pill_price' },
-                              { flag: 'usa.svg',  key: 'info_price_usd' },
-                              { flag: 'euro.svg', key: 'info_price_eur' }
-                          ],
-                          init() {
-                              setInterval(() => {
-                                  this.fading = true;
-                                  setTimeout(() => {
-                                      this.idx = (this.idx + 1) % this.items.length;
-                                      this.fading = false;
-                                  }, 250);
-                              }, 3000);
-                          }
-                      }">
-                    <span class="inline-flex items-center gap-1.5 pill-cycle"
-                          :class="{ 'pill-cycle--fading': fading }">
-                        <img :src="`images/${items[idx].flag}`" alt="" class="w-3.5 h-3.5 rounded-full object-cover">
-                        <span x-text="$store.lang.t(items[idx].key)"></span>
-                    </span>
-                </span>
             </div>
+            <span class="px-3 py-1 text-xs font-semibold text-white rounded-full bg-earth-accent whitespace-nowrap pill"
+                  x-data="{
+                      idx: 0,
+                      fading: false,
+                      items: [
+                          { flag: 'thai.svg', key: 'pill_price' },
+                          { flag: 'usa.svg',  key: 'info_price_usd' },
+                          { flag: 'euro.svg', key: 'info_price_eur' }
+                      ],
+                      init() {
+                          setInterval(() => {
+                              this.fading = true;
+                              setTimeout(() => {
+                                  this.idx = (this.idx + 1) % this.items.length;
+                                  this.fading = false;
+                              }, 250);
+                          }, 3000);
+                      }
+                  }">
+                <span class="inline-flex items-center gap-1.5 pill-cycle"
+                      :class="{ 'pill-cycle--fading': fading }">
+                    <img :src="`images/${items[idx].flag}`" alt="" class="w-3.5 h-3.5 rounded-full object-cover">
+                    <span x-text="$store.lang.t(items[idx].key)"></span>
+                </span>
+            </span>
         </div>
     </div>
 
