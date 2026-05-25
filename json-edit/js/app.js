@@ -370,10 +370,30 @@ function registerEditor() {
       const thEmpty = this.isMissing(key, 'th');
       if (enEmpty && !thEmpty) return 'EN empty';
       if (thEmpty && !enEmpty) return 'TH empty';
-      const en = (this.data.en[key] || '').length;
-      const th = (this.data.th[key] || '').length;
-      if (en < 60 && th < 60) return null;
-      const ratio = Math.max(en, th) / Math.max(Math.min(en, th), 1);
+
+      // Placeholder/HTML token parity: each pattern's count must match
+      // across EN and TH for the same key, otherwise translation may
+      // silently break formatting.
+      const en = this.data.en[key] || '';
+      const th = this.data.th[key] || '';
+      const patterns = [
+        { name: 'HTML tags', re: /<[^>]+>/g },
+        { name: '{placeholder}', re: /\{[^}]+\}/g },
+        { name: 'printf %', re: /%[sd]/g },
+        { name: '\\n / \\t', re: /\\[nt]/g },
+      ];
+      const mismatches = [];
+      for (const p of patterns) {
+        const a = (en.match(p.re) || []).length;
+        const b = (th.match(p.re) || []).length;
+        if (a !== b) mismatches.push(`${p.name} ${a}↔${b}`);
+      }
+      if (mismatches.length) return mismatches.join(' · ');
+
+      const lenEn = en.length;
+      const lenTh = th.length;
+      if (lenEn < 60 && lenTh < 60) return null;
+      const ratio = Math.max(lenEn, lenTh) / Math.max(Math.min(lenEn, lenTh), 1);
       if (ratio > 2.2) return 'Length differs';
       return null;
     },
