@@ -94,7 +94,7 @@ function registerEditor() {
 
       window.addEventListener('keydown', (e) => {
         const cmd = e.ctrlKey || e.metaKey;
-        if (cmd && e.key === 's') {
+        if (cmd && (e.key === 's' || e.key === 'Enter')) {
           e.preventDefault();
           if (this.dirtyCount() > 0) this.modal = 'diff';
         }
@@ -106,7 +106,10 @@ function registerEditor() {
           e.preventDefault();
           this.redo();
         }
-        if (e.key === 'Escape') this.modal = null;
+        if (e.key === 'Escape') {
+          if (this.revertField()) { e.preventDefault(); return; }
+          this.modal = null;
+        }
         if (cmd && e.key === 'k') {
           e.preventDefault();
           document.getElementById('search-input')?.focus();
@@ -414,6 +417,23 @@ function registerEditor() {
     commitActiveEdit() {
       this._commitCurrentBurst();
       this.activeEdit = null;
+    },
+
+    // Revert the focused field to its on-disk original value, and
+    // record the revert as a single undo entry so Cmd+Z brings the
+    // edited value back.
+    revertField() {
+      const a = this.activeEdit;
+      if (!a) return false;
+      if (!this.isDirty(a.key, a.lang)) return false;
+      const prev = this.data[a.lang][a.key] ?? '';
+      const next = this.original[a.lang][a.key] ?? '';
+      clearTimeout(a.timer);
+      a.timer = null;
+      a.focusPrev = next; // suppress any pending commit of this change
+      this.data[a.lang][a.key] = next;
+      this.pushHistory({ type: 'edit', key: a.key, lang: a.lang, prev, next });
+      return true;
     },
 
     pushHistory(entry) {
