@@ -51,6 +51,17 @@ function registerEditor() {
     toast: null,
     modal: null,
     backups: [],
+    isMobile: false,
+    uiScale: null, // null = auto (driven by media queries)
+
+    // Undo/redo: a global, coalesced history. activeEdit holds the
+    // in-flight burst (focused textarea being typed into); its focusPrev
+    // is the undo target. A burst commits when 600ms elapses with no
+    // further input, on blur, or on any external state change (save, lang
+    // switch, structural op). Cap of 200 entries.
+    history: [],
+    historyIdx: -1,
+    activeEdit: null, // { key, lang, focusPrev, timer } | null
 
     async init() {
       const storedDark = localStorage.getItem('json-edit:dark');
@@ -62,6 +73,22 @@ function registerEditor() {
       this.viewMode = localStorage.getItem('json-edit:view') || 'tabs';
       this.activeLang = localStorage.getItem('json-edit:lang') || 'en';
 
+      const storedScale = localStorage.getItem('json-edit:scale');
+      if (storedScale !== null) {
+        const n = parseFloat(storedScale);
+        if (!isNaN(n)) this.uiScale = n;
+      }
+      this.applyUiScale();
+
+      const mqlMobile = window.matchMedia('(max-width: 1023px)');
+      this.isMobile = mqlMobile.matches;
+      mqlMobile.addEventListener('change', (e) => {
+        this.isMobile = e.matches;
+        this.growAll();
+      });
+      window.matchMedia('(min-width: 1024px)').addEventListener('change', () => this.growAll());
+      window.matchMedia('(min-width: 1536px)').addEventListener('change', () => this.growAll());
+
       await this.load();
       this.tryRestoreDraft();
 
@@ -70,6 +97,14 @@ function registerEditor() {
         if (cmd && e.key === 's') {
           e.preventDefault();
           if (this.dirtyCount() > 0) this.modal = 'diff';
+        }
+        if (cmd && !e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
+          e.preventDefault();
+          this.undo();
+        }
+        if (cmd && e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
+          e.preventDefault();
+          this.redo();
         }
         if (e.key === 'Escape') this.modal = null;
         if (cmd && e.key === 'k') {
@@ -102,6 +137,7 @@ function registerEditor() {
         this.original = deepClone(json);
         this.keys = Object.keys(json.en);
         this.computeSections();
+        this.growAll();
       } catch (e) {
         this.toastMsg('Failed to load lang.json: ' + e.message, 'error');
       } finally {
@@ -147,10 +183,15 @@ function registerEditor() {
     visibleKeys(keys) {
       if (!this.search) return keys;
       const q = this.search.toLowerCase();
+      // Match against BOTH original and current values so a row that matched
+      // at search time stays visible while the user edits it (otherwise the
+      // textarea unmounts mid-keystroke as the typed value diverges from q).
       return keys.filter(k =>
         k.toLowerCase().includes(q) ||
         (this.data.en[k] || '').toLowerCase().includes(q) ||
-        (this.data.th[k] || '').toLowerCase().includes(q)
+        (this.data.th[k] || '').toLowerCase().includes(q) ||
+        (this.original.en[k] || '').toLowerCase().includes(q) ||
+        (this.original.th[k] || '').toLowerCase().includes(q)
       );
     },
 
@@ -169,6 +210,7 @@ function registerEditor() {
 
     toggleSection(sec) {
       this.collapsed[sec] = !this.collapsed[sec];
+      this.growAll();
     },
 
     isMissing(key, lang) {
@@ -249,6 +291,7 @@ function registerEditor() {
 
     async save() {
       if (this.dirtyCount() === 0) return;
+      this.commitActiveEdit();
       this.saving = true;
       try {
         const res = await fetch('php/save.php', {
@@ -334,14 +377,178 @@ function registerEditor() {
       this.applyDark();
     },
 
+    // ── History / undo / redo ───────────────────────────────────────────
+
+    beginEdit(key, lang) {
+      this.commitActiveEdit();
+      this.activeEdit = {
+        key, lang,
+        focusPrev: this.data[lang][key] ?? '',
+        timer: null,
+      };
+    },
+
+    touchEdit() {
+      const a = this.activeEdit;
+      if (!a) return;
+      clearTimeout(a.timer);
+      a.timer = setTimeout(() => this._commitCurrentBurst(), 600);
+    },
+
+    endEdit() {
+      this.commitActiveEdit();
+    },
+
+    _commitCurrentBurst() {
+      const a = this.activeEdit;
+      if (!a) return;
+      clearTimeout(a.timer);
+      a.timer = null;
+      const next = this.data[a.lang][a.key] ?? '';
+      if (next !== a.focusPrev) {
+        this.pushHistory({ type: 'edit', key: a.key, lang: a.lang, prev: a.focusPrev, next });
+        a.focusPrev = next; // ready for next burst within same focus
+      }
+    },
+
+    commitActiveEdit() {
+      this._commitCurrentBurst();
+      this.activeEdit = null;
+    },
+
+    pushHistory(entry) {
+      // Truncate any redo branch first
+      if (this.historyIdx < this.history.length - 1) {
+        this.history.splice(this.historyIdx + 1);
+      }
+      this.history.push(entry);
+      if (this.history.length > 200) this.history.shift();
+      this.historyIdx = this.history.length - 1;
+    },
+
+    undo() {
+      this.commitActiveEdit();
+      if (this.historyIdx < 0) return;
+      this.applyEntry(this.history[this.historyIdx], 'undo');
+      this.historyIdx--;
+    },
+
+    redo() {
+      this.commitActiveEdit();
+      if (this.historyIdx >= this.history.length - 1) return;
+      this.historyIdx++;
+      this.applyEntry(this.history[this.historyIdx], 'redo');
+    },
+
+    // Dispatch on entry.type. Tasks 5/6/8 extend this with 'add',
+    // 'delete', 'rename', 'bulk' branches.
+    applyEntry(entry, dir) {
+      if (entry.type === 'edit') {
+        this.data[entry.lang][entry.key] = dir === 'undo' ? entry.prev : entry.next;
+      }
+    },
+
     setView(v) {
+      this.commitActiveEdit();
       this.viewMode = v;
       localStorage.setItem('json-edit:view', v);
+      this.growAll();
+    },
+
+    effectiveView() {
+      // Mobile is too narrow to show both languages side-by-side meaningfully —
+      // force tabs so the bottom drawer can drive language switching.
+      return this.isMobile ? 'tabs' : this.viewMode;
+    },
+
+    currentAutoScale() {
+      if (window.matchMedia('(min-width: 1536px)').matches) return 2.0;
+      if (window.matchMedia('(min-width: 1024px)').matches) return 1.5;
+      return 1.0;
+    },
+
+    effectiveScale() {
+      return this.uiScale ?? this.currentAutoScale();
+    },
+
+    applyUiScale() {
+      if (this.uiScale === null) {
+        document.documentElement.style.removeProperty('--ui-scale');
+      } else {
+        document.documentElement.style.setProperty('--ui-scale', String(this.uiScale));
+      }
+      this.growAll();
+    },
+
+    setUiScale(v) {
+      this.uiScale = v;
+      if (v === null) localStorage.removeItem('json-edit:scale');
+      else localStorage.setItem('json-edit:scale', String(v));
+      this.applyUiScale();
+    },
+
+    bumpScale(dir) {
+      const cur = this.effectiveScale();
+      const next = Math.min(2.5, Math.max(0.8, Math.round((cur + dir * 0.1) * 10) / 10));
+      this.setUiScale(next);
+    },
+
+    resetScale() {
+      this.setUiScale(null);
+    },
+
+    // Called from @input on every textarea. Grows the textarea to fit
+    // its content; for split-view pairs, equalizes both siblings to the
+    // taller content height (so the pair stays visually balanced like
+    // cards in a row).
+    autoGrow(el) {
+      if (!el) return;
+      const pair = el.closest?.('[data-split-pair]');
+      if (pair && this.effectiveView() === 'split') {
+        this._syncPair(pair);
+      } else {
+        this._grow(el);
+      }
+    },
+
+    _grow(t) {
+      if (!t || t.offsetParent === null) return; // skip hidden (display:none)
+      t.style.height = 'auto';
+      t.style.height = t.scrollHeight + 'px';
+    },
+
+    _syncPair(pair) {
+      const tas = pair.querySelectorAll('textarea');
+      if (tas.length < 2) return;
+      tas.forEach(t => { t.style.height = 'auto'; });
+      let max = 0;
+      tas.forEach(t => { if (t.scrollHeight > max) max = t.scrollHeight; });
+      tas.forEach(t => { t.style.height = max + 'px'; });
+    },
+
+    // Re-fits every visible textarea. Call after data load, lang switch,
+    // view switch, scale change, or viewport breakpoint change — anything
+    // that changes what content is visible in which textarea.
+    growAll() {
+      requestAnimationFrame(() => {
+        const inSplit = this.effectiveView() === 'split';
+        document.querySelectorAll('textarea').forEach(t => {
+          const pair = t.closest('[data-split-pair]');
+          if (pair && inSplit) return; // handled below
+          if (pair && !inSplit) { t.style.height = ''; return; } // hidden, reset
+          this._grow(t);
+        });
+        if (inSplit) {
+          document.querySelectorAll('[data-split-pair]').forEach(p => this._syncPair(p));
+        }
+      });
     },
 
     setLang(l) {
+      this.commitActiveEdit();
       this.activeLang = l;
       localStorage.setItem('json-edit:lang', l);
+      this.growAll();
     },
 
     formatTime,

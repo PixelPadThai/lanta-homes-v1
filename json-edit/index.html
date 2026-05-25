@@ -42,6 +42,12 @@
         <button @click="$store.editor.setView('split')" :class="$store.editor.viewMode === 'split' ? 'bg-white dark:bg-zinc-800 shadow-sm text-zinc-900 dark:text-zinc-100' : 'text-zinc-500'" class="px-2.5 py-1 text-xs font-medium rounded-md transition">Split</button>
       </div>
 
+      <div class="hidden lg:flex items-center gap-0.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg p-0.5 border border-zinc-200 dark:border-zinc-800">
+        <button @click="$store.editor.bumpScale(-1)" class="px-2 py-1 text-xs font-semibold rounded-md hover:bg-white dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400" aria-label="Decrease UI size">A−</button>
+        <button @click="$store.editor.resetScale()" :title="$store.editor.uiScale === null ? 'Auto · click to keep auto' : 'Click to reset to auto'" class="px-1.5 py-1 text-[10px] font-medium tabular-nums text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 min-w-[2.75rem]" x-text="Math.round($store.editor.effectiveScale() * 100) + '%'"></button>
+        <button @click="$store.editor.bumpScale(1)" class="px-2 py-1 text-xs font-semibold rounded-md hover:bg-white dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400" aria-label="Increase UI size">A+</button>
+      </div>
+
       <div class="text-[10px] text-zinc-500 hidden md:block whitespace-nowrap" x-show="$store.editor.lastSaved">
         Saved <span x-text="$store.editor.formatTime($store.editor.lastSaved)"></span>
       </div>
@@ -116,8 +122,8 @@
 
     <main class="flex-1 min-w-0">
 
-      <div class="sticky top-[57px] sm:top-[49px] z-10 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur border-b border-zinc-200 dark:border-zinc-800"
-           x-show="$store.editor.viewMode === 'tabs'">
+      <div class="sticky top-[57px] sm:top-[49px] z-10 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur border-b border-zinc-200 dark:border-zinc-800 hidden lg:block"
+           x-show="$store.editor.effectiveView() === 'tabs'">
         <div class="px-4 lg:px-6 py-2 flex items-center gap-1">
           <button @click="$store.editor.setLang('en')" :class="$store.editor.activeLang === 'en' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900' : 'hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400'" class="px-3 py-1.5 text-sm font-medium rounded-md transition flex items-center gap-2">
             English
@@ -134,7 +140,7 @@
         </div>
       </div>
 
-      <div class="px-3 sm:px-4 lg:px-6 py-4 max-w-5xl mx-auto">
+      <div class="px-3 sm:px-4 lg:px-6 py-4 pb-28 lg:pb-8 max-w-5xl mx-auto">
 
         <div x-show="$store.editor.loading" class="text-center py-12 text-zinc-500">
           <div class="inline-block w-5 h-5 border-2 border-zinc-300 border-t-amber-500 rounded-full animate-spin"></div>
@@ -171,13 +177,13 @@
                     </template>
                   </div>
 
-                  <div x-show="$store.editor.viewMode === 'split'" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div x-show="$store.editor.effectiveView() === 'split'" data-split-pair class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <div class="flex items-center justify-between mb-1">
                         <label class="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">EN</label>
                         <span x-show="$store.editor.isDirty(key, 'en')" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                       </div>
-                      <textarea x-model="$store.editor.data.en[key]" class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans" rows="1" dir="auto"></textarea>
+                      <textarea x-model="$store.editor.data.en[key]" @input="$store.editor.autoGrow($el); $store.editor.touchEdit()" @focus="$store.editor.beginEdit(key, 'en')" @blur="$store.editor.endEdit()" x-init="$nextTick(() => $store.editor.autoGrow($el))" class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans" rows="1" dir="auto"></textarea>
                       <div class="text-[10px] text-zinc-400 mt-1 tabular-nums" x-text="(($store.editor.data.en[key] || '').length) + ' chars'"></div>
                     </div>
                     <div>
@@ -185,14 +191,18 @@
                         <label class="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">TH</label>
                         <span x-show="$store.editor.isDirty(key, 'th')" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                       </div>
-                      <textarea x-model="$store.editor.data.th[key]" class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans" rows="1" dir="auto"></textarea>
+                      <textarea x-model="$store.editor.data.th[key]" @input="$store.editor.autoGrow($el); $store.editor.touchEdit()" @focus="$store.editor.beginEdit(key, 'th')" @blur="$store.editor.endEdit()" x-init="$nextTick(() => $store.editor.autoGrow($el))" class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans" rows="1" dir="auto"></textarea>
                       <div class="text-[10px] text-zinc-400 mt-1 tabular-nums" x-text="(($store.editor.data.th[key] || '').length) + ' chars'"></div>
                     </div>
                   </div>
 
-                  <div x-show="$store.editor.viewMode === 'tabs'">
+                  <div x-show="$store.editor.effectiveView() === 'tabs'">
                     <textarea
                       x-model="$store.editor.data[$store.editor.activeLang][key]"
+                      @input="$store.editor.autoGrow($el); $store.editor.touchEdit()"
+                      @focus="$store.editor.beginEdit(key, $store.editor.activeLang)"
+                      @blur="$store.editor.endEdit()"
+                      x-init="$nextTick(() => $store.editor.autoGrow($el))"
                       class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans"
                       rows="1" dir="auto"></textarea>
                     <div class="flex items-center justify-between mt-1">
@@ -214,7 +224,27 @@
     </main>
   </div>
 
-  <div x-show="$store.editor.toast" x-transition.opacity x-cloak class="fixed bottom-6 right-6 z-50 pointer-events-none">
+  <div x-show="$store.editor.isMobile" x-cloak class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 shadow-lg">
+    <div x-show="$store.editor.search" class="text-center text-[11px] text-zinc-500 dark:text-zinc-400 py-1 border-b border-zinc-200 dark:border-zinc-800">
+      <span x-text="$store.editor.totalVisible()"></span> match<span x-show="$store.editor.totalVisible() !== 1">es</span>
+    </div>
+    <div class="grid grid-cols-2 divide-x divide-zinc-200 dark:divide-zinc-800">
+      <button @click="$store.editor.setLang('en')"
+              :class="$store.editor.activeLang === 'en' ? 'bg-amber-500 text-white' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900'"
+              class="py-3 text-sm font-medium flex items-center justify-center gap-2 transition">
+        English
+        <span x-show="$store.editor.dirtyCount('en') > 0" :class="$store.editor.activeLang === 'en' ? 'bg-white/30' : 'bg-amber-500 text-white'" class="text-[10px] px-1.5 py-0.5 rounded-full" x-text="$store.editor.dirtyCount('en')"></span>
+      </button>
+      <button @click="$store.editor.setLang('th')"
+              :class="$store.editor.activeLang === 'th' ? 'bg-amber-500 text-white' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900'"
+              class="py-3 text-sm font-medium flex items-center justify-center gap-2 transition">
+        ภาษาไทย
+        <span x-show="$store.editor.dirtyCount('th') > 0" :class="$store.editor.activeLang === 'th' ? 'bg-white/30' : 'bg-amber-500 text-white'" class="text-[10px] px-1.5 py-0.5 rounded-full" x-text="$store.editor.dirtyCount('th')"></span>
+      </button>
+    </div>
+  </div>
+
+  <div x-show="$store.editor.toast" x-transition.opacity x-cloak class="fixed bottom-24 lg:bottom-6 right-6 z-50 pointer-events-none">
     <div :class="{
           'bg-emerald-500': $store.editor.toast?.kind === 'success',
           'bg-rose-500': $store.editor.toast?.kind === 'error',
