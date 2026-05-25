@@ -73,6 +73,12 @@ function registerEditor() {
     addingSec: null,    // section name currently showing the input, or null
     addingValue: '',    // text typed into that input
 
+    // Row controls: which key has its ⋯ menu open, and which key is
+    // being inline-renamed (mutually exclusive of menuKey).
+    menuKey: null,
+    renamingKey: null,
+    renamingValue: '',
+
     async init() {
       const storedDark = localStorage.getItem('json-edit:dark');
       this.darkMode = storedDark === null
@@ -219,6 +225,72 @@ function registerEditor() {
         const ta = document.querySelector(`[data-key="${CSS.escape(key)}"] textarea`);
         ta?.focus();
       });
+    },
+
+    deleteKey(key) {
+      if (!confirm(`Delete key "${key}"?\nThis removes the key from both languages.`)) return;
+      this.commitActiveEdit();
+      const en = this.data.en[key] ?? '';
+      const th = this.data.th[key] ?? '';
+      const wasInOriginal = key in this.original.en || key in this.original.th;
+      delete this.data.en[key];
+      delete this.data.th[key];
+      if (wasInOriginal) this.deletedKeys.add(key);
+      this.rebuildKeys();
+      this.pushHistory({ type: 'delete', key, en, th, wasInOriginal });
+      this.menuKey = null;
+    },
+
+    duplicateKey(key) {
+      this.commitActiveEdit();
+      // Find a free suffix: _copy, _copy2, _copy3, ...
+      let i = 1;
+      let newKey;
+      do {
+        newKey = key + (i === 1 ? '_copy' : `_copy${i}`);
+        i++;
+      } while (newKey in this.data.en || newKey in this.data.th);
+      const en = this.data.en[key] ?? '';
+      const th = this.data.th[key] ?? '';
+      this.data.en[newKey] = en;
+      this.data.th[newKey] = th;
+      this.rebuildKeys();
+      this.pushHistory({ type: 'add', key: newKey, en, th });
+      this.menuKey = null;
+    },
+
+    startRename(key) {
+      this.menuKey = null;
+      this.renamingKey = key;
+      this.renamingValue = key;
+    },
+
+    cancelRename() {
+      this.renamingKey = null;
+      this.renamingValue = '';
+    },
+
+    commitRename() {
+      const oldKey = this.renamingKey;
+      const newKey = (this.renamingValue || '').trim();
+      if (!oldKey || !newKey || newKey === oldKey) { this.cancelRename(); return; }
+      if (newKey in this.data.en || newKey in this.data.th) {
+        this.toastMsg(`Key "${newKey}" already exists`, 'error');
+        return;
+      }
+      this.commitActiveEdit();
+      const en = this.data.en[oldKey] ?? '';
+      const th = this.data.th[oldKey] ?? '';
+      this.data.en[newKey] = en;
+      this.data.th[newKey] = th;
+      delete this.data.en[oldKey];
+      delete this.data.th[oldKey];
+      if (oldKey in this.original.en || oldKey in this.original.th) {
+        this.deletedKeys.add(oldKey);
+      }
+      this.rebuildKeys();
+      this.pushHistory({ type: 'rename', oldKey, newKey, en, th });
+      this.cancelRename();
     },
 
     sectionList() {

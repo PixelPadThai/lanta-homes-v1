@@ -169,13 +169,41 @@
                   :class="$store.editor.rowDirty(key) ? 'border-amber-300 dark:border-amber-500/40 bg-amber-50/30 dark:bg-amber-500/5' : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900'"
                   class="border rounded-xl p-3 sm:p-4 transition">
                   <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
-                    <code class="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono break-all" x-text="key"></code>
-                    <template x-if="$store.editor.parityWarn(key)">
-                      <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300 flex items-center gap-1">
-                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                        <span x-text="$store.editor.parityWarn(key)"></span>
-                      </span>
-                    </template>
+                    <div class="flex items-center gap-2 min-w-0">
+                      <code class="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono break-all" x-show="$store.editor.renamingKey !== key" x-text="key"></code>
+                      <input
+                        x-show="$store.editor.renamingKey === key"
+                        x-model="$store.editor.renamingValue"
+                        @keydown.enter.prevent="$store.editor.commitRename()"
+                        @keydown.escape.prevent="$store.editor.cancelRename()"
+                        @blur="$store.editor.commitRename()"
+                        x-init="$watch('$store.editor.renamingKey', v => { if (v === key) $nextTick(() => { $el.focus(); $el.select(); }) })"
+                        class="text-[11px] px-1.5 py-0.5 rounded font-mono bg-white dark:bg-zinc-950 border border-amber-300 dark:border-amber-500/40 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <template x-if="$store.editor.parityWarn(key)">
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300 flex items-center gap-1">
+                          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                          <span x-text="$store.editor.parityWarn(key)"></span>
+                        </span>
+                      </template>
+                      <div class="relative">
+                        <button
+                          @click="$store.editor.menuKey = $store.editor.menuKey === key ? null : key"
+                          @keydown.escape="$store.editor.menuKey = null"
+                          class="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 px-1 leading-none text-lg"
+                          aria-label="Row actions">⋯</button>
+                        <div
+                          x-show="$store.editor.menuKey === key"
+                          @click.outside="$store.editor.menuKey = null"
+                          x-transition.opacity
+                          class="absolute right-0 top-full mt-1 z-20 w-36 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg overflow-hidden text-sm">
+                          <button @click="$store.editor.startRename(key)" class="w-full text-left px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800">Rename</button>
+                          <button @click="$store.editor.duplicateKey(key)" class="w-full text-left px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800">Duplicate</button>
+                          <button @click="$store.editor.deleteKey(key)" class="w-full text-left px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-rose-600 dark:text-rose-400">Delete</button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div x-show="$store.editor.effectiveView() === 'split'" data-split-pair class="relative grid grid-cols-1 md:grid-cols-2 gap-3">
