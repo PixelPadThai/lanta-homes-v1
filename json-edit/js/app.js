@@ -69,6 +69,10 @@ function registerEditor() {
     // the entry from this set.
     deletedKeys: new Set(),
 
+    // Open inline "+ Add key" form keyed by section name.
+    addingSec: null,    // section name currently showing the input, or null
+    addingValue: '',    // text typed into that input
+
     async init() {
       const storedDark = localStorage.getItem('json-edit:dark');
       this.darkMode = storedDark === null
@@ -179,6 +183,42 @@ function registerEditor() {
       }
       this.keys = out;
       this.computeSections();
+    },
+
+    // Open the inline add form for a given section. Pre-fills with the
+    // section's key prefix when there's a clear one.
+    startAdd(sec) {
+      this.commitActiveEdit();
+      this.addingSec = sec;
+      // Reverse-lookup prefix from SECTION_NAMES values
+      const prefix = Object.keys(SECTION_NAMES).find(k => SECTION_NAMES[k] === sec);
+      this.addingValue = prefix ? prefix + '_' : '';
+    },
+
+    cancelAdd() {
+      this.addingSec = null;
+      this.addingValue = '';
+    },
+
+    commitAdd() {
+      const key = (this.addingValue || '').trim();
+      if (!key) { this.cancelAdd(); return; }
+      if (key in this.data.en || key in this.data.th) {
+        this.toastMsg(`Key "${key}" already exists`, 'error');
+        return;
+      }
+      // If sectionOf(key) doesn't match the section the form was opened on,
+      // honor the key's natural section (don't force it).
+      this.data.en[key] = '';
+      this.data.th[key] = '';
+      this.rebuildKeys();
+      this.pushHistory({ type: 'add', key, en: '', th: '' });
+      this.cancelAdd();
+      // Focus the new row's first textarea (best-effort).
+      requestAnimationFrame(() => {
+        const ta = document.querySelector(`[data-key="${CSS.escape(key)}"] textarea`);
+        ta?.focus();
+      });
     },
 
     sectionList() {
