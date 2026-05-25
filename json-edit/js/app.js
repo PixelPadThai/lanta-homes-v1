@@ -63,6 +63,12 @@ function registerEditor() {
     historyIdx: -1,
     activeEdit: null, // { key, lang, focusPrev, timer } | null
 
+    // Keys that existed in `original` but the user has marked for deletion.
+    // Save payload omits them (already absent from `data`); diff renders
+    // them as (removed); dirtyCount includes them; undo of a delete clears
+    // the entry from this set.
+    deletedKeys: new Set(),
+
     async init() {
       const storedDark = localStorage.getItem('json-edit:dark');
       this.darkMode = storedDark === null
@@ -138,8 +144,10 @@ function registerEditor() {
         const json = await res.json();
         this.data = deepClone(json);
         this.original = deepClone(json);
-        this.keys = Object.keys(json.en);
-        this.computeSections();
+        this.deletedKeys = new Set();
+        this.history = [];
+        this.historyIdx = -1;
+        this.rebuildKeys();
         this.growAll();
       } catch (e) {
         this.toastMsg('Failed to load lang.json: ' + e.message, 'error');
@@ -156,6 +164,21 @@ function registerEditor() {
         map[sec].push(key);
       }
       this.sections = map;
+    },
+
+    // Recompute this.keys from the union of data.en and data.th keys,
+    // then re-derive sections. Call after any structural change.
+    rebuildKeys() {
+      const seen = new Set();
+      const out = [];
+      for (const k of Object.keys(this.data.en)) {
+        if (!seen.has(k)) { seen.add(k); out.push(k); }
+      }
+      for (const k of Object.keys(this.data.th)) {
+        if (!seen.has(k)) { seen.add(k); out.push(k); }
+      }
+      this.keys = out;
+      this.computeSections();
     },
 
     sectionList() {
@@ -175,6 +198,15 @@ function registerEditor() {
       for (const k of this.keys) {
         if (lang) { if (this.isDirty(k, lang)) n++; }
         else { if (this.isDirty(k, 'en')) n++; if (this.isDirty(k, 'th')) n++; }
+      }
+      // Deletions of keys that had non-empty values on disk count too.
+      for (const k of this.deletedKeys) {
+        if (lang) {
+          if ((this.original[lang][k] ?? '') !== '') n++;
+        } else {
+          if ((this.original.en[k] ?? '') !== '') n++;
+          if ((this.original.th[k] ?? '') !== '') n++;
+        }
       }
       return n;
     },
@@ -238,6 +270,7 @@ function registerEditor() {
       const changes = [];
       for (const k of this.keys) {
         for (const lang of ['en', 'th']) {
+          // New keys (not in original) appear here with old: '' — that's correct.
           if (this.isDirty(k, lang)) {
             changes.push({
               key: k,
@@ -245,6 +278,15 @@ function registerEditor() {
               old: this.original[lang][k] ?? '',
               new: this.data[lang][k] ?? '',
             });
+          }
+        }
+      }
+      // Deleted keys: render with new: '(removed)' marker.
+      for (const k of this.deletedKeys) {
+        for (const lang of ['en', 'th']) {
+          const oldV = this.original[lang][k] ?? '';
+          if (oldV !== '') {
+            changes.push({ key: k, lang, old: oldV, new: '', removed: true });
           }
         }
       }
@@ -492,11 +534,53 @@ function registerEditor() {
       this.applyEntry(this.history[this.historyIdx], 'redo');
     },
 
-    // Dispatch on entry.type. Tasks 5/6/8 extend this with 'add',
-    // 'delete', 'rename', 'bulk' branches.
     applyEntry(entry, dir) {
       if (entry.type === 'edit') {
         this.data[entry.lang][entry.key] = dir === 'undo' ? entry.prev : entry.next;
+      } else if (entry.type === 'add') {
+        // entry: { type: 'add', key, en, th }
+        if (dir === 'undo') {
+          delete this.data.en[entry.key];
+          delete this.data.th[entry.key];
+        } else {
+          this.data.en[entry.key] = entry.en;
+          this.data.th[entry.key] = entry.th;
+        }
+        this.rebuildKeys();
+      } else if (entry.type === 'delete') {
+        // entry: { type: 'delete', key, en, th, wasInOriginal }
+        if (dir === 'undo') {
+          this.data.en[entry.key] = entry.en;
+          this.data.th[entry.key] = entry.th;
+          if (entry.wasInOriginal) this.deletedKeys.delete(entry.key);
+        } else {
+          delete this.data.en[entry.key];
+          delete this.data.th[entry.key];
+          if (entry.wasInOriginal) this.deletedKeys.add(entry.key);
+        }
+        this.rebuildKeys();
+      } else if (entry.type === 'rename') {
+        // entry: { type: 'rename', oldKey, newKey, en, th }
+        const from = dir === 'undo' ? entry.newKey : entry.oldKey;
+        const to = dir === 'undo' ? entry.oldKey : entry.newKey;
+        this.data.en[to] = entry.en;
+        this.data.th[to] = entry.th;
+        delete this.data.en[from];
+        delete this.data.th[from];
+        // Maintain deletedKeys: if oldKey was in original, then renaming
+        // forward "deletes" it (in disk-state terms) and renaming back
+        // "restores" it.
+        if (entry.oldKey in this.original.en || entry.oldKey in this.original.th) {
+          if (dir === 'undo') this.deletedKeys.delete(entry.oldKey);
+          else this.deletedKeys.add(entry.oldKey);
+        }
+        this.rebuildKeys();
+      } else if (entry.type === 'bulk') {
+        // entry: { type: 'bulk', prev: { data, deletedKeys[] }, next: same }
+        const snap = dir === 'undo' ? entry.prev : entry.next;
+        this.data = deepClone(snap.data);
+        this.deletedKeys = new Set(snap.deletedKeys);
+        this.rebuildKeys();
       }
     },
 

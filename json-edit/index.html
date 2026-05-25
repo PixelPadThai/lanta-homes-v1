@@ -292,9 +292,9 @@
                 <div class="text-[9px] uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-1 font-medium">Before</div>
                 <div class="whitespace-pre-wrap break-words" x-text="change.old || '(empty)'"></div>
               </div>
-              <div class="p-3 bg-emerald-50/40 dark:bg-emerald-950/20 text-emerald-900 dark:text-emerald-200">
-                <div class="text-[9px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1 font-medium">After</div>
-                <div class="whitespace-pre-wrap break-words" x-text="change.new || '(empty)'"></div>
+              <div :class="change.removed ? 'p-3 bg-rose-50/40 dark:bg-rose-950/20 text-rose-900 dark:text-rose-200' : 'p-3 bg-emerald-50/40 dark:bg-emerald-950/20 text-emerald-900 dark:text-emerald-200'">
+                <div :class="change.removed ? 'text-[9px] uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-1 font-medium' : 'text-[9px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1 font-medium'" x-text="change.removed ? 'Removed' : 'After'"></div>
+                <div class="whitespace-pre-wrap break-words" x-text="change.removed ? '(key deleted)' : (change.new || '(empty)')"></div>
               </div>
             </div>
           </div>
