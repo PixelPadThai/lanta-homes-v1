@@ -1,7 +1,7 @@
 # Local-only project docs / notes — not part of the deployed site
 CLAUDE.md
 docs/
-
+json-edit/
 # OS / editor cruft
 .DS_Store
 Thumbs.db
