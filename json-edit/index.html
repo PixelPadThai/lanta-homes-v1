@@ -58,6 +58,15 @@
       </button>
 
       <button
+        @click="$store.editor.togglePreview()"
+        :class="$store.editor.previewOpen ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900' : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'"
+        class="px-2.5 py-1.5 text-sm font-medium rounded-lg flex items-center gap-1.5 transition"
+        aria-label="Toggle live preview">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="hidden sm:inline">Preview</span>
+      </button>
+
+      <button
         @click="$store.editor.dirtyCount() > 0 ? $store.editor.modal = 'diff' : null"
         :disabled="$store.editor.dirtyCount() === 0 || $store.editor.saving"
         :class="$store.editor.dirtyCount() > 0 ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed'"
@@ -319,6 +328,32 @@
           'bg-zinc-800 dark:bg-zinc-700': $store.editor.toast?.kind === 'info'
          }"
          class="text-white px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium" x-text="$store.editor.toast?.text"></div>
+  </div>
+
+  <div
+    x-show="$store.editor.previewOpen"
+    x-cloak
+    class="fixed inset-y-0 right-0 z-40 w-full lg:w-1/2 bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col">
+    <div class="flex items-center gap-2 px-3 py-2 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
+      <div class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Live preview</div>
+      <div class="text-[10px] text-zinc-500">/ot265/?editor=1</div>
+      <div class="flex-1"></div>
+      <button @click="$store.editor.refreshPreview()" class="p-1.5 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Refresh preview">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
+      <a :href="'../ot265/index.html?editor=1'" target="_blank" rel="noopener" class="p-1.5 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Open in new tab">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+      <button @click="$store.editor.previewOpen = false" class="p-1.5 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Close preview">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <iframe
+      id="preview-iframe"
+      src="../ot265/index.html?editor=1"
+      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+      @load="$store.editor.onPreviewLoad($el)"
+      class="flex-1 w-full bg-white"></iframe>
   </div>
 
   <div x-show="$store.editor.modal === 'diff'" x-cloak @click.self="$store.editor.modal = null" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">

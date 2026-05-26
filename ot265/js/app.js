@@ -32,6 +32,19 @@ function registerAlpine() {
         async init() {
             // lang.json is the single source of truth. Must be served over HTTP
             // (php -S in dev, Apache in prod) — fetch() is blocked on file://.
+            const editorMode = new URLSearchParams(location.search).get('editor') === '1';
+            if (editorMode) {
+                // Live-preview mode: parent (json-edit) pushes data via
+                // postMessage. We don't fetch lang.json at all — the parent
+                // is authoritative. The initial empty render is fine because
+                // the first postMessage arrives within a frame of iframe load.
+                window.addEventListener('message', (e) => {
+                    if (e.data?.type !== 'editor:lang') return;
+                    this.data = e.data.data;
+                    document.documentElement.classList.add('lang-ready');
+                });
+                return;
+            }
             try {
                 // no-cache: revalidate against the server each load so text
                 // edits appear after deploy without a cache-buster to juggle.

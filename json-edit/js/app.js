@@ -79,6 +79,9 @@ function registerEditor() {
     renamingKey: null,
     renamingValue: '',
     dragOver: false,
+    previewOpen: false,
+    previewIframe: null,   // bound on iframe load
+    _previewTimer: null,
 
     async init() {
       const storedDark = localStorage.getItem('json-edit:dark');
@@ -170,6 +173,13 @@ function registerEditor() {
         JSON.stringify(this.data);
         clearTimeout(this.autosaveTimer);
         this.autosaveTimer = setTimeout(() => this.saveDraft(), 400);
+      });
+
+      Alpine.effect(() => {
+        JSON.stringify(this.data); // track
+        if (!this.previewOpen) return;
+        clearTimeout(this._previewTimer);
+        this._previewTimer = setTimeout(() => this.pushPreview(), 200);
       });
     },
 
@@ -356,6 +366,30 @@ function registerEditor() {
       } catch (e) {
         this.toastMsg(`Drop failed: ${e.message}`, 'error');
       }
+    },
+
+    togglePreview() {
+      this.previewOpen = !this.previewOpen;
+      if (this.previewOpen) {
+        // Send the current data once the iframe load handler binds it.
+        requestAnimationFrame(() => this.pushPreview());
+      }
+    },
+
+    refreshPreview() {
+      const f = document.getElementById('preview-iframe');
+      if (f) f.src = f.src; // re-trigger load
+    },
+
+    onPreviewLoad(el) {
+      this.previewIframe = el;
+      this.pushPreview();
+    },
+
+    pushPreview() {
+      const win = this.previewIframe?.contentWindow;
+      if (!win) return;
+      win.postMessage({ type: 'editor:lang', data: { en: this.data.en, th: this.data.th } }, '*');
     },
 
     sectionList() {
