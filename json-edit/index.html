@@ -389,5 +389,13 @@
 
 </div>
 
+  <div x-show="$store.editor.dragOver" x-cloak class="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-6">
+    <div class="w-full h-full border-4 border-dashed border-amber-400 rounded-3xl bg-amber-50/80 dark:bg-amber-500/10 backdrop-blur-sm flex flex-col items-center justify-center gap-3 text-amber-700 dark:text-amber-300">
+      <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <div class="text-base font-semibold">Drop a lang.json to load it</div>
+      <div class="text-xs opacity-80">Replaces current data (you can review the diff and discard if needed)</div>
+    </div>
+  </div>
+
 </body>
 </html>

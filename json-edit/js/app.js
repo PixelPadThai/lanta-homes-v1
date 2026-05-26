@@ -78,6 +78,7 @@ function registerEditor() {
     menuKey: null,
     renamingKey: null,
     renamingValue: '',
+    dragOver: false,
 
     async init() {
       const storedDark = localStorage.getItem('json-edit:dark');
@@ -137,6 +138,31 @@ function registerEditor() {
           e.preventDefault();
           e.returnValue = '';
         }
+      });
+
+      window.addEventListener('dragenter', (e) => {
+        if (!e.dataTransfer?.types?.includes('Files')) return;
+        e.preventDefault();
+        this.dragOver = true;
+      });
+      window.addEventListener('dragover', (e) => {
+        if (!e.dataTransfer?.types?.includes('Files')) return;
+        e.preventDefault();
+      });
+      window.addEventListener('dragleave', (e) => {
+        // Only hide when leaving the window entirely (relatedTarget null).
+        if (e.relatedTarget === null) this.dragOver = false;
+      });
+      window.addEventListener('drop', (e) => {
+        if (!e.dataTransfer?.files?.length) { this.dragOver = false; return; }
+        e.preventDefault();
+        this.dragOver = false;
+        const file = e.dataTransfer.files[0];
+        if (!file.name.toLowerCase().endsWith('.json')) {
+          this.toastMsg('Drop a .json file', 'error');
+          return;
+        }
+        this.loadFromFile(file);
       });
 
       this.autosaveTimer = null;
@@ -291,6 +317,45 @@ function registerEditor() {
       this.rebuildKeys();
       this.pushHistory({ type: 'rename', oldKey, newKey, en, th });
       this.cancelRename();
+    },
+
+    // Load a lang.json from disk via drag-drop. Replaces `data` but
+    // leaves `original` untouched so the existing diff modal shows
+    // exactly what's about to change against the on-disk file. The
+    // history is snapshotted as a single 'bulk' entry so Cmd+Z reverts
+    // the whole load.
+    async loadFromFile(file) {
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        if (typeof parsed?.en !== 'object' || typeof parsed?.th !== 'object' || !parsed.en || !parsed.th) {
+          throw new Error('File must contain "en" and "th" objects');
+        }
+        // Normalize: ensure both langs have the same key set (fill empty
+        // strings where one side has a key the other doesn't). save.php
+        // requires symmetric keys.
+        const all = new Set([...Object.keys(parsed.en), ...Object.keys(parsed.th)]);
+        for (const k of all) {
+          if (typeof parsed.en[k] !== 'string') parsed.en[k] = String(parsed.en[k] ?? '');
+          if (typeof parsed.th[k] !== 'string') parsed.th[k] = String(parsed.th[k] ?? '');
+        }
+        this.commitActiveEdit();
+        const prevSnap = { data: deepClone(this.data), deletedKeys: [...this.deletedKeys] };
+        this.data = parsed;
+        this.deletedKeys = new Set();
+        // Any key that was in original but is missing from the loaded file
+        // counts as a delete.
+        for (const k of Object.keys(this.original.en)) {
+          if (!(k in this.data.en)) this.deletedKeys.add(k);
+        }
+        this.rebuildKeys();
+        const nextSnap = { data: deepClone(this.data), deletedKeys: [...this.deletedKeys] };
+        this.pushHistory({ type: 'bulk', prev: prevSnap, next: nextSnap });
+        this.growAll();
+        this.toastMsg(`Loaded ${file.name} — review diff and Save to persist`, 'success');
+      } catch (e) {
+        this.toastMsg(`Drop failed: ${e.message}`, 'error');
+      }
     },
 
     sectionList() {
