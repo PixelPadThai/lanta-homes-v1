@@ -24,6 +24,7 @@ function deepClone(o) {
 }
 
 function formatTime(d) {
+  if (!d) return '';
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
@@ -389,7 +390,9 @@ function registerEditor() {
     pushPreview() {
       const win = this.previewIframe?.contentWindow;
       if (!win) return;
-      win.postMessage({ type: 'editor:lang', data: { en: this.data.en, th: this.data.th } }, '*');
+      // Plain-object snapshot — Alpine's reactive Proxy isn't structured-cloneable.
+      const data = JSON.parse(JSON.stringify({ en: this.data.en, th: this.data.th }));
+      win.postMessage({ type: 'editor:lang', data }, '*');
     },
 
     sectionList() {
@@ -707,38 +710,6 @@ function registerEditor() {
       this.data[a.lang][a.key] = next;
       this.pushHistory({ type: 'edit', key: a.key, lang: a.lang, prev, next });
       return true;
-    },
-
-    // Tabs view: copy the other language's value into this lang for key.
-    // Records one undo entry. Does nothing if the other side is empty.
-    copyFromOther(key, lang) {
-      const other = lang === 'en' ? 'th' : 'en';
-      const src = (this.data[other][key] ?? '').trim();
-      if (!src) return;
-      this.commitActiveEdit();
-      const prev = this.data[lang][key] ?? '';
-      const next = this.data[other][key] ?? '';
-      if (prev === next) return;
-      this.data[lang][key] = next;
-      this.pushHistory({ type: 'edit', key, lang, prev, next });
-    },
-
-    // Split view: mirror — if exactly one side is empty, fill it from
-    // the other. No-op if both filled or both empty. Records one undo.
-    mirrorPair(key) {
-      const en = (this.data.en[key] ?? '').trim();
-      const th = (this.data.th[key] ?? '').trim();
-      if ((!en && !th) || (en && th)) return;
-      const fromLang = en ? 'en' : 'th';
-      const toLang = en ? 'th' : 'en';
-      this.copyFromOther(key, toLang); // delegates + records history
-    },
-
-    // Used by the buttons' tooltips and disabled state.
-    canMirror(key) {
-      const en = (this.data.en[key] ?? '').trim();
-      const th = (this.data.th[key] ?? '').trim();
-      return (!!en) !== (!!th); // XOR: exactly one filled
     },
 
     pushHistory(entry) {

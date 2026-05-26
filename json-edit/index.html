@@ -215,7 +215,7 @@
                     </div>
                   </div>
 
-                  <div x-show="$store.editor.effectiveView() === 'split'" data-split-pair class="relative grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div x-show="$store.editor.effectiveView() === 'split'" data-split-pair class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <div class="flex items-center justify-between mb-1">
                         <label class="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">EN</label>
@@ -232,27 +232,9 @@
                       <textarea x-model="$store.editor.data.th[key]" @input="$store.editor.autoGrow($el); $store.editor.touchEdit()" @focus="$store.editor.beginEdit(key, 'th')" @blur="$store.editor.endEdit()" x-init="$nextTick(() => $store.editor.autoGrow($el))" class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans" rows="1" dir="auto"></textarea>
                       <div class="text-[10px] text-zinc-400 mt-1 tabular-nums" x-text="(($store.editor.data.th[key] || '').length) + ' chars'"></div>
                     </div>
-                    <button
-                      type="button"
-                      @click="$store.editor.mirrorPair(key)"
-                      :disabled="!$store.editor.canMirror(key)"
-                      :title="$store.editor.canMirror(key) ? 'Copy from filled side to empty side' : 'Both sides have content (or both empty) — nothing to mirror'"
-                      class="hidden md:flex absolute left-1/2 top-9 -translate-x-1/2 w-7 h-7 items-center justify-center rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-sm text-zinc-500 hover:text-amber-600 hover:border-amber-300 disabled:opacity-30 disabled:cursor-not-allowed transition z-10">
-                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-                    </button>
                   </div>
 
                   <div x-show="$store.editor.effectiveView() === 'tabs'">
-                    <div class="flex items-center justify-between mb-1" x-show="$store.editor.data[$store.editor.activeLang === 'en' ? 'th' : 'en'][key]">
-                      <button
-                        type="button"
-                        @click="$store.editor.copyFromOther(key, $store.editor.activeLang)"
-                        class="text-[10px] text-zinc-500 hover:text-amber-600 flex items-center gap-1 transition"
-                        :title="'Copy ' + ($store.editor.activeLang === 'en' ? 'TH' : 'EN') + ' value into this field'">
-                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 10l-5-5 5-5"/><path d="M20 14a4 4 0 0 0-4-4H4"/></svg>
-                        <span x-text="'from ' + ($store.editor.activeLang === 'en' ? 'TH' : 'EN')"></span>
-                      </button>
-                    </div>
                     <textarea
                       x-model="$store.editor.data[$store.editor.activeLang][key]"
                       @input="$store.editor.autoGrow($el); $store.editor.touchEdit()"
@@ -351,7 +333,7 @@
     <iframe
       id="preview-iframe"
       src="../ot265/index.html?editor=1"
-      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+      sandbox="allow-scripts allow-popups allow-forms"
       @load="$store.editor.onPreviewLoad($el)"
       class="flex-1 w-full bg-white"></iframe>
   </div>
