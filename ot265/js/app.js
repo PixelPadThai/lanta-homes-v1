@@ -158,6 +158,51 @@ function registerAlpine() {
         }
     }));
 
+    // ── Weather Card ────────────────────────────────────────────
+    // Live current weather for Koh Lanta via Open-Meteo (no API key).
+    // Coords match the map iframe (Old Town). WMO weather codes are
+    // bucketed into 7 buckets, each with an i18n label key + SVG icon.
+    Alpine.data('weatherCard', () => ({
+        loaded: false,
+        error: false,
+        temp: null,
+        labelKey: 'weather_clear',
+        iconType: 'sun',
+
+        async load() {
+            try {
+                const url = 'https://api.open-meteo.com/v1/forecast'
+                    + '?latitude=7.5232&longitude=99.0961'
+                    + '&current=temperature_2m,weather_code'
+                    + '&timezone=auto';
+                const res = await fetch(url, { cache: 'no-cache' });
+                if (!res.ok) throw new Error('fetch failed');
+                const j = await res.json();
+                const code = j?.current?.weather_code ?? 0;
+                this.temp = Math.round(j?.current?.temperature_2m ?? 0);
+                const bucket = this.bucketFor(code);
+                this.labelKey = bucket.labelKey;
+                this.iconType = bucket.iconType;
+                this.loaded = true;
+            } catch (e) {
+                this.error = true;
+            }
+        },
+
+        // WMO weather codes → bucket. See https://open-meteo.com/en/docs.
+        bucketFor(code) {
+            if (code === 0) return { labelKey: 'weather_clear',        iconType: 'sun' };
+            if (code <= 2)  return { labelKey: 'weather_partly_cloudy', iconType: 'cloud-sun' };
+            if (code === 3) return { labelKey: 'weather_cloudy',        iconType: 'cloud' };
+            if (code <= 48) return { labelKey: 'weather_foggy',         iconType: 'cloud' };
+            if (code <= 57) return { labelKey: 'weather_rain',          iconType: 'rain' };
+            if (code <= 67) return { labelKey: 'weather_rain',          iconType: 'rain' };
+            if (code <= 82) return { labelKey: 'weather_showers',       iconType: 'rain' };
+            if (code <= 99) return { labelKey: 'weather_thunderstorm',  iconType: 'storm' };
+            return { labelKey: 'weather_clear', iconType: 'sun' };
+        }
+    }));
+
     // ── Scroll Reveal ───────────────────────────────────────────
     Alpine.data('scrollReveal', (delay = 0) => ({
         revealed: false,
