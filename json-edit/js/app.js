@@ -43,17 +43,14 @@ async function sha256hex(str) {
 }
 
 function registerAuth() {
+  const dark = localStorage.getItem('json-edit:dark') === 'true';
+  document.documentElement.classList.toggle('dark', dark);
+
   Alpine.store('auth', {
-    authenticated: false,
+    authenticated: getCookie(AUTH_COOKIE) === PASS_HASH,
     password: '',
     error: '',
     loading: false,
-
-    init() {
-      const dark = localStorage.getItem('json-edit:dark') === 'true';
-      document.documentElement.classList.toggle('dark', dark);
-      this.authenticated = getCookie(AUTH_COOKIE) === PASS_HASH;
-    },
 
     async login() {
       this.loading = true;

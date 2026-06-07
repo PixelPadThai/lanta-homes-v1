@@ -9,7 +9,7 @@
   <script src="js/app.js"></script>
   <script src="js/alpine.min.js" defer></script>
 </head>
-<body x-data x-init="$store.auth.init()" class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased min-h-screen selection:bg-amber-200 dark:selection:bg-amber-500/30">
+<body x-data class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased min-h-screen selection:bg-amber-200 dark:selection:bg-amber-500/30">
 
 <template x-if="!$store.auth.authenticated">
   <div class="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4">
