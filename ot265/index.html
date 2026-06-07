@@ -65,10 +65,11 @@
         <button
             @click="$store.lang.toggle()"
             class="flex items-center justify-center w-8 h-8 overflow-hidden transition-transform rounded-full shadow-lg cursor-pointer ring-2 ring-white/80 hover:scale-105"
-            :aria-label="$store.lang.current === 'en' ? 'Switch to Thai' : 'Switch to English'"
+            :aria-label="$store.lang.current === 'en' ? 'Switch to Thai' : $store.lang.current === 'th' ? 'Switch to Swedish' : 'Switch to English'"
         >
             <img x-show="$store.lang.current === 'en'" src="images/thai.svg" alt="" class="object-cover w-full h-full">
-            <img x-show="$store.lang.current === 'th'" src="images/english.svg" alt="" class="object-cover w-full h-full">
+            <img x-show="$store.lang.current === 'th'" src="images/swedish.svg" alt="" class="object-cover w-full h-full">
+            <img x-show="$store.lang.current === 'sv'" src="images/english.svg" alt="" class="object-cover w-full h-full">
         </button>
     </div>
 

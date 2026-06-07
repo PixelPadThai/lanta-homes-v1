@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@source "../index.html";
+@source "../js/app.js";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+[x-cloak] { display: none !important; }
+
+/* UI scale: drives root font-size so every rem-based Tailwind class
+   (spacing, font-size, sizing) grows proportionally. Override is set
+   inline on <html> by app.js when the user clicks A−/A+. */
+:root { --ui-scale: 1; }
+@media (min-width: 1024px) { :root { --ui-scale: 1.5; } }
+@media (min-width: 1536px) { :root { --ui-scale: 2; } }
+html { font-size: calc(16px * var(--ui-scale)); }
+
+/* Auto-grow is driven by JS (autoGrow) so it works in Safari/iOS too —
+   field-sizing:content is Chrome-only. overflow-y:hidden hides the
+   transient scrollbar that flashes between height resets. */
+textarea {
+  min-height: 2.5rem;
+  resize: none;
+  overflow-y: hidden;
+}
+
+/* iOS Safari zooms the entire page in when a focused input is smaller
+   than 16px. Forcing inputs to 16px on mobile suppresses the zoom while
+   the rest of the layout stays at its base size. */
+@media (max-width: 1023px) {
+  input,
+  textarea {
+    font-size: max(1rem, 16px) !important;
+  }
+}

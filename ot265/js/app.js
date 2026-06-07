@@ -33,7 +33,7 @@ function registerAlpine() {
             // Restore the visitor's saved language choice (persisted by toggle()
             // in localStorage) so a reload keeps the language they picked.
             const saved = localStorage.getItem('lang');
-            if (saved === 'en' || saved === 'th') this.current = saved;
+            if (saved === 'en' || saved === 'th' || saved === 'sv') this.current = saved;
             document.documentElement.lang = this.current;
 
             // lang.json is the single source of truth. Must be served over HTTP
@@ -68,7 +68,8 @@ function registerAlpine() {
         },
 
         toggle() {
-            this.current = this.current === 'en' ? 'th' : 'en';
+            const cycle = { en: 'th', th: 'sv', sv: 'en' };
+            this.current = cycle[this.current] || 'en';
             document.documentElement.lang = this.current;
             localStorage.setItem('lang', this.current);
         }
