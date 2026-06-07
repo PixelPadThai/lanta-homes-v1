@@ -58,18 +58,34 @@
     </div>
 
     <!-- Language Toggle (visible only while hero is in viewport) -->
-    <div class="fixed z-50 top-4 right-4"
+    <!-- Shows 2 flag buttons — one for each language that is NOT currently active. -->
+    <div class="fixed z-50 top-4 right-4 flex gap-2"
          x-data="langToggle"
          x-show="visible"
          x-transition.opacity>
         <button
-            @click="$store.lang.toggle()"
+            x-show="$store.lang.current !== 'en'"
+            @click="$store.lang.setLang('en')"
             class="flex items-center justify-center w-8 h-8 overflow-hidden transition-transform rounded-full shadow-lg cursor-pointer ring-2 ring-white/80 hover:scale-105"
-            :aria-label="$store.lang.current === 'en' ? 'Switch to Thai' : $store.lang.current === 'th' ? 'Switch to Swedish' : 'Switch to English'"
+            aria-label="Switch to English"
         >
-            <img x-show="$store.lang.current === 'en'" src="images/thai.svg" alt="" class="object-cover w-full h-full">
-            <img x-show="$store.lang.current === 'th'" src="images/swedish.svg" alt="" class="object-cover w-full h-full">
-            <img x-show="$store.lang.current === 'sv'" src="images/english.svg" alt="" class="object-cover w-full h-full">
+            <img src="images/english.svg" alt="English" class="object-cover w-full h-full">
+        </button>
+        <button
+            x-show="$store.lang.current !== 'th'"
+            @click="$store.lang.setLang('th')"
+            class="flex items-center justify-center w-8 h-8 overflow-hidden transition-transform rounded-full shadow-lg cursor-pointer ring-2 ring-white/80 hover:scale-105"
+            aria-label="Switch to Thai"
+        >
+            <img src="images/thai.svg" alt="Thai" class="object-cover w-full h-full">
+        </button>
+        <button
+            x-show="$store.lang.current !== 'sv'"
+            @click="$store.lang.setLang('sv')"
+            class="flex items-center justify-center w-8 h-8 overflow-hidden transition-transform rounded-full shadow-lg cursor-pointer ring-2 ring-white/80 hover:scale-105"
+            aria-label="Switch to Swedish"
+        >
+            <img src="images/swedish.svg" alt="Swedish" class="object-cover w-full h-full">
         </button>
     </div>
 
@@ -783,7 +799,7 @@
     <!-- Keen Slider JS (self-hosted) -->
     <script src="js/keen-slider.min.js?v=6"></script>
     <!-- App JS (registers stores/components before Alpine init) -->
-    <script src="js/app.js?v=38"></script>
+    <script src="js/app.js?v=39"></script>
     <!-- Alpine.js (self-hosted, deferred — fires alpine:init after page parses) -->
     <script defer src="js/alpine.min.js?v=3"></script>
 </body>

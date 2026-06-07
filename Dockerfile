@@ -7,7 +7,12 @@ COPY . /var/www/html/
 # requests missing a trailing slash, e.g. /ot265 -> /ot265/. This is what
 # makes the QR-code URL without a trailing slash work in production.
 # deflate/expires/headers drive gzip compression + cache lifetimes (see perf.conf).
-RUN a2enmod dir rewrite deflate expires headers
+RUN a2enmod dir rewrite deflate expires headers \
+    # Allow Apache (www-data) to write lang.json and its temp file.
+    && chown www-data:www-data /var/www/html/ot265 /var/www/html/ot265/lang.json \
+    # Create the json-edit backups dir and make it writable.
+    && mkdir -p /var/www/html/json-edit/php/backups \
+    && chown -R www-data:www-data /var/www/html/json-edit/php/backups
 
 # Performance: gzip text assets + far-future caching for static files.
 # Written to conf-available (kept out of the web root) and enabled with a2enconf.

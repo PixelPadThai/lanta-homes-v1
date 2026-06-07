@@ -30,10 +30,13 @@ function registerAlpine() {
         data: {},
 
         async init() {
-            // Restore the visitor's saved language choice (persisted by toggle()
-            // in localStorage) so a reload keeps the language they picked.
-            const saved = localStorage.getItem('lang');
-            if (saved === 'en' || saved === 'th' || saved === 'sv') this.current = saved;
+            // Restore the visitor's saved language choice. Try-catch guards
+            // against sandboxed iframes (e.g. the json-edit preview) where
+            // localStorage access throws a SecurityError.
+            try {
+                const saved = localStorage.getItem('lang');
+                if (saved === 'en' || saved === 'th' || saved === 'sv') this.current = saved;
+            } catch(e) {}
             document.documentElement.lang = this.current;
 
             // lang.json is the single source of truth. Must be served over HTTP
@@ -67,11 +70,15 @@ function registerAlpine() {
             return this.data[this.current]?.[key] || key;
         },
 
+        setLang(lang) {
+            this.current = lang;
+            document.documentElement.lang = lang;
+            try { localStorage.setItem('lang', lang); } catch(e) {}
+        },
+
         toggle() {
             const cycle = { en: 'th', th: 'sv', sv: 'en' };
-            this.current = cycle[this.current] || 'en';
-            document.documentElement.lang = this.current;
-            localStorage.setItem('lang', this.current);
+            this.setLang(cycle[this.current] || 'en');
         }
     });
 
