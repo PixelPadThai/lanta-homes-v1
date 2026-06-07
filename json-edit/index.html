@@ -9,9 +9,43 @@
   <script src="js/app.js"></script>
   <script src="js/alpine.min.js" defer></script>
 </head>
-<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased min-h-screen selection:bg-amber-200 dark:selection:bg-amber-500/30">
+<body x-data x-init="$store.auth.init()" class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased min-h-screen selection:bg-amber-200 dark:selection:bg-amber-500/30">
 
-<div x-data x-init="$store.editor.init()" class="flex flex-col min-h-screen">
+<template x-if="!$store.auth.authenticated">
+  <div class="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white grid place-items-center text-xl font-bold mx-auto mb-4">{}</div>
+        <h1 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">JSON Editor</h1>
+        <p class="text-sm text-zinc-500 mt-1">lanta.homes / ot265</p>
+      </div>
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-6">
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1.5">Password</label>
+          <input
+            type="password"
+            x-model="$store.auth.password"
+            @keydown.enter="$store.auth.login()"
+            x-init="$nextTick(() => $el.focus())"
+            class="w-full px-3 py-2.5 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40"
+            placeholder="Enter password"
+            autocomplete="current-password">
+          <p x-show="$store.auth.error" x-text="$store.auth.error" class="text-xs text-rose-600 mt-1"></p>
+        </div>
+        <button
+          @click="$store.auth.login()"
+          :disabled="$store.auth.loading || !$store.auth.password"
+          class="w-full py-2.5 text-sm font-medium rounded-lg bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white transition shadow-sm flex items-center justify-center gap-2">
+          <svg x-show="$store.auth.loading" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          <span x-text="$store.auth.loading ? 'Checking...' : 'Sign in'"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template x-if="$store.auth.authenticated">
+<div x-init="$store.editor.init()" class="flex flex-col min-h-screen">
 
   <header class="sticky top-0 z-30 backdrop-blur-md bg-white/80 dark:bg-zinc-950/80 border-b border-zinc-200 dark:border-zinc-800">
     <div class="px-3 sm:px-4 lg:px-6 py-2.5 flex items-center gap-2 sm:gap-3">
@@ -42,6 +76,12 @@
         <button @click="$store.editor.setView('split')" :class="$store.editor.viewMode === 'split' ? 'bg-white dark:bg-zinc-800 shadow-sm text-zinc-900 dark:text-zinc-100' : 'text-zinc-500'" class="px-2.5 py-1 text-xs font-medium rounded-md transition">Split</button>
       </div>
 
+      <div x-show="$store.editor.effectiveView() === 'split'" class="hidden lg:flex items-center gap-0.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg p-0.5 border border-zinc-200 dark:border-zinc-800">
+        <button @click="$store.editor.toggleLangVisible('en')" :class="$store.editor.langVisible('en') ? 'bg-white dark:bg-zinc-800 shadow-sm text-zinc-900 dark:text-zinc-100' : 'text-zinc-400'" class="px-2.5 py-1 text-xs font-medium rounded-md transition">EN</button>
+        <button @click="$store.editor.toggleLangVisible('th')" :class="$store.editor.langVisible('th') ? 'bg-white dark:bg-zinc-800 shadow-sm text-zinc-900 dark:text-zinc-100' : 'text-zinc-400'" class="px-2.5 py-1 text-xs font-medium rounded-md transition">TH</button>
+        <button @click="$store.editor.toggleLangVisible('sv')" :class="$store.editor.langVisible('sv') ? 'bg-white dark:bg-zinc-800 shadow-sm text-zinc-900 dark:text-zinc-100' : 'text-zinc-400'" class="px-2.5 py-1 text-xs font-medium rounded-md transition">SV</button>
+      </div>
+
       <div class="hidden lg:flex items-center gap-0.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg p-0.5 border border-zinc-200 dark:border-zinc-800">
         <button @click="$store.editor.bumpScale(-1)" class="px-2 py-1 text-xs font-semibold rounded-md hover:bg-white dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400" aria-label="Decrease UI size">A−</button>
         <button @click="$store.editor.resetScale()" :title="$store.editor.uiScale === null ? 'Auto · click to keep auto' : 'Click to reset to auto'" class="px-1.5 py-1 text-[10px] font-medium tabular-nums text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 min-w-[2.75rem]" x-text="Math.round($store.editor.effectiveScale() * 100) + '%'"></button>
@@ -55,6 +95,10 @@
       <button @click="$store.editor.toggleDark()" class="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Toggle theme">
         <svg x-show="!$store.editor.darkMode" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <svg x-show="$store.editor.darkMode" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+
+      <button @click="$store.auth.logout()" class="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500" aria-label="Sign out" title="Sign out">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
 
       <button
@@ -219,8 +263,8 @@
                     </div>
                   </div>
 
-                  <div x-show="$store.editor.effectiveView() === 'split'" data-split-pair class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div>
+                  <div x-show="$store.editor.effectiveView() === 'split'" data-split-pair class="grid gap-3" :style="{ gridTemplateColumns: 'repeat(' + $store.editor.visibleLangCount() + ', minmax(0, 1fr))' }">
+                    <div x-show="$store.editor.langVisible('en')">
                       <div class="flex items-center justify-between mb-1">
                         <label class="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">EN</label>
                         <span x-show="$store.editor.isDirty(key, 'en')" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
@@ -228,7 +272,7 @@
                       <textarea x-model="$store.editor.data.en[key]" @input="$store.editor.autoGrow($el); $store.editor.touchEdit()" @focus="$store.editor.beginEdit(key, 'en')" @blur="$store.editor.endEdit()" x-init="$nextTick(() => $store.editor.autoGrow($el))" class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans" rows="1" dir="auto"></textarea>
                       <div class="text-[10px] text-zinc-400 mt-1 tabular-nums" x-text="(($store.editor.data.en[key] || '').length) + ' chars'"></div>
                     </div>
-                    <div>
+                    <div x-show="$store.editor.langVisible('th')">
                       <div class="flex items-center justify-between mb-1">
                         <label class="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">TH</label>
                         <span x-show="$store.editor.isDirty(key, 'th')" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
@@ -236,7 +280,7 @@
                       <textarea x-model="$store.editor.data.th[key]" @input="$store.editor.autoGrow($el); $store.editor.touchEdit()" @focus="$store.editor.beginEdit(key, 'th')" @blur="$store.editor.endEdit()" x-init="$nextTick(() => $store.editor.autoGrow($el))" class="w-full px-3 py-2 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/40 resize-none font-sans" rows="1" dir="auto"></textarea>
                       <div class="text-[10px] text-zinc-400 mt-1 tabular-nums" x-text="(($store.editor.data.th[key] || '').length) + ' chars'"></div>
                     </div>
-                    <div>
+                    <div x-show="$store.editor.langVisible('sv')">
                       <div class="flex items-center justify-between mb-1">
                         <label class="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">SV</label>
                         <span x-show="$store.editor.isDirty(key, 'sv')" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
@@ -425,8 +469,6 @@
     </div>
   </div>
 
-</div>
-
   <div x-show="$store.editor.dragOver" x-cloak class="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-6">
     <div class="w-full h-full border-4 border-dashed border-amber-400 rounded-3xl bg-amber-50/80 dark:bg-amber-500/10 backdrop-blur-sm flex flex-col items-center justify-center gap-3 text-amber-700 dark:text-amber-300">
       <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -434,6 +476,9 @@
       <div class="text-xs opacity-80">Replaces current data (you can review the diff and discard if needed)</div>
     </div>
   </div>
+
+</div>
+</template>
 
 </body>
 </html>

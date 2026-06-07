@@ -16,6 +16,71 @@ const SECTION_NAMES = {
 
 const LANGS = ['en', 'th', 'sv'];
 
+// ── Auth ──────────────────────────────────────────────────────────────────────
+// To change the password: compute SHA-256 of the new password and replace PASS_HASH.
+// e.g. in browser console: crypto.subtle.digest('SHA-256', new TextEncoder().encode('newpass'))
+//   .then(b => console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')))
+const PASS_HASH = '04afeb912087464d67492a733fb8221c94852e5719d19d0ad81c2fbb265b757f'; // "lanta2024"
+const AUTH_COOKIE = 'json_editor_auth';
+
+function getCookie(name) {
+  const m = document.cookie.match('(?:^|;)\\s*' + name + '=([^;]*)');
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+function setCookie(name, value, days) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Strict`;
+}
+
+function deleteCookie(name) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict`;
+}
+
+async function sha256hex(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function registerAuth() {
+  Alpine.store('auth', {
+    authenticated: false,
+    password: '',
+    error: '',
+    loading: false,
+
+    init() {
+      const dark = localStorage.getItem('json-edit:dark') === 'true';
+      document.documentElement.classList.toggle('dark', dark);
+      this.authenticated = getCookie(AUTH_COOKIE) === PASS_HASH;
+    },
+
+    async login() {
+      this.loading = true;
+      this.error = '';
+      try {
+        const hash = await sha256hex(this.password);
+        if (hash === PASS_HASH) {
+          setCookie(AUTH_COOKIE, PASS_HASH, 14);
+          this.authenticated = true;
+        } else {
+          this.error = 'Incorrect password';
+          this.password = '';
+        }
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    logout() {
+      deleteCookie(AUTH_COOKIE);
+      this.authenticated = false;
+      this.password = '';
+      this.error = '';
+    },
+  });
+}
+
 function sectionOf(key) {
   const prefix = key.split('_')[0];
   return SECTION_NAMES[prefix] || 'Other';
@@ -43,7 +108,8 @@ function registerEditor() {
     keys: [],
     sections: {},
     activeLang: 'en',
-    viewMode: 'tabs',
+    viewMode: 'split',
+    visibleLangs: { en: true, th: true, sv: true },
     darkMode: false,
     sidebarOpen: false,
     search: '',
@@ -88,12 +154,22 @@ function registerEditor() {
 
     async init() {
       const storedDark = localStorage.getItem('json-edit:dark');
-      this.darkMode = storedDark === null
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-        : storedDark === 'true';
+      this.darkMode = storedDark === 'true';
       this.applyDark();
 
-      this.viewMode = localStorage.getItem('json-edit:view') || 'tabs';
+      this.viewMode = localStorage.getItem('json-edit:view') || 'split';
+
+      const storedLangs = localStorage.getItem('json-edit:visibleLangs');
+      if (storedLangs) {
+        try {
+          const parsed = JSON.parse(storedLangs);
+          for (const l of LANGS) {
+            if (typeof parsed[l] === 'boolean') this.visibleLangs[l] = parsed[l];
+          }
+          // Guard: ensure at least one lang is always visible
+          if (LANGS.every(l => !this.visibleLangs[l])) this.visibleLangs.en = true;
+        } catch {}
+      }
       this.activeLang = localStorage.getItem('json-edit:lang') || 'en';
 
       const storedScale = localStorage.getItem('json-edit:scale');
@@ -807,6 +883,23 @@ function registerEditor() {
       }
     },
 
+    langVisible(l) {
+      return !!this.visibleLangs[l];
+    },
+
+    toggleLangVisible(l) {
+      const next = !this.visibleLangs[l];
+      // Must keep at least one lang visible
+      if (!next && LANGS.filter(x => this.visibleLangs[x]).length <= 1) return;
+      this.visibleLangs[l] = next;
+      localStorage.setItem('json-edit:visibleLangs', JSON.stringify(this.visibleLangs));
+      this.growAll();
+    },
+
+    visibleLangCount() {
+      return LANGS.filter(l => this.visibleLangs[l]).length;
+    },
+
     setView(v) {
       this.commitActiveEdit();
       this.viewMode = v;
@@ -876,8 +969,10 @@ function registerEditor() {
     },
 
     _syncPair(pair) {
-      const tas = pair.querySelectorAll('textarea');
-      if (tas.length < 2) return;
+      // Only consider textareas in visible lang columns (offsetParent === null when ancestor is display:none)
+      const tas = [...pair.querySelectorAll('textarea')].filter(t => t.offsetParent !== null);
+      if (tas.length === 0) return;
+      if (tas.length === 1) { this._grow(tas[0]); return; }
       tas.forEach(t => { t.style.height = 'auto'; });
       let max = 0;
       tas.forEach(t => { if (t.scrollHeight > max) max = t.scrollHeight; });
@@ -915,5 +1010,6 @@ function registerEditor() {
   });
 }
 
-if (window.Alpine) registerEditor();
-else document.addEventListener('alpine:init', registerEditor);
+function registerAll() { registerAuth(); registerEditor(); }
+if (window.Alpine) registerAll();
+else document.addEventListener('alpine:init', registerAll);
